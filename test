@@ -1,0 +1,71 @@
+## Points les plus proches
+import numpy as np
+import time
+L = []
+for i in range(10000):
+    l = np.random.uniform(0,10,2)
+    L += [l]
+
+
+# # algorithme naïf - Complexité en O((n-1)^2)) = O(n^2)
+# min = 100
+# t = time.time()
+# for i in range(len(L)):
+#     for j in range(len(L)):
+#         a = (L[i][0]**2+L[j][1]**2)**0.5
+#         if a < min:
+#             min = a
+#             Points = (L[i],L[j])
+# print(Points, time.time()-t)
+
+# # algorithme naïf - Complexité en O((n-1)^2)) = O(n^2)
+# min = 100
+# t = time.time()
+# for i in range(len(L)):
+#     for j in range(len(L)):
+#         a = (L[i][0]**2+L[j][1]**2)**0.5
+#         if a < min:
+#             min = a
+#             Points = (L[i],L[j])
+# print(Points, time.time()-t)
+
+# diviser pour régner
+def tri_par_indice(L):
+    A = L.copy()
+    A.sort()
+    B = []
+    for i in A:
+        B += [L.index(i)]
+    return(B)
+# Il faut alors s'assurer qu'aucun élément ne se répète, sinon utiliser np.argsort() qui fait tout le travail.
+
+n = int(input("un entier : "))
+X = []
+for i in range(n):
+    l = np.random.uniform(0,10,1)
+    X += [l]
+Y = []
+for i in range(n):
+    l = np.random.uniform(0,10,1)
+    Y += [l]
+Cx = tri_par_indice(X)
+Cy = tri_par_indice(Y)
+
+def paire_plus_proche(X,Y,Cx,Cy):
+    if len(Cx)%2 == 0: mid = len(Cx)/2
+    else : mid = (len(Cx)+1)/2
+    P1 = []
+    P2 = []
+    for i in range(mid):
+        P1 += X[Cx[i]]
+        P2 += X[Cx[n-mid]]
+        
+        
+        
+    # min = 100
+    # for i in range(len(P1)):
+    #     for j in range(len(P1)):
+    #         a = (P1[i]**2+Y[X.index(P1[i])]**2)**0.5
+    #         if a < min:
+    #             min = a
+    #             Points = (L[i],L[j])
