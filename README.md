@@ -1,3 +1,3 @@
 # Code
-programme d'un jeu d'échec
+programme d'un jeu d'échechec
 
