@@ -1,18 +1,105 @@
-## Points les plus proches
-import numpy as np
-import time
-L = []
-for i in range(10000):
-    l = np.random.uniform(0,10,2)
-    L += [l]
 
-        
-        
-        
-    # min = 100
-    # for i in range(len(P1)):
-    #     for j in range(len(P1)):
-    #         a = (P1[i]**2+Y[X.index(P1[i])]**2)**0.5
-    #         if a < min:
-    #             min = a
-    #             Points = (L[i],L[j])
+class Vide():
+    def __init__(self):
+        self.color=0
+
+    def possibiltés(self,a,b,T):
+        return []
+
+
+
+class Cavalier():
+    def __init__(self,color):
+        self.color=color
+
+    def possibilités_aveugles(self,a,b,T):
+        p=[]
+        for i in range(a-2,a+3):
+            for j in range(b-2,b+3):
+                if i in range(8) and j in range(8) and ((a-i)**2)+((b-j)**2)==5 and T[i][j].color!=self.color:
+                    p.append([i,j])
+        return p
+
+class Tour():
+    def __init__(self,color):
+        self.color=color
+
+    def possibilités_aveugles(self,a,b,T):
+        p=[]
+        i=a+1
+        while i<8 and T[i][b].color!=self.color:
+            p.append([i,b])
+            if T[i][b].color==(-1)*self.color:
+                i=8
+            i+=1
+        i=a-1
+        while i>-1 and T[i][b].color!=self.color:
+            p.append([i,b])
+            if T[i][b].color==(-1)*self.color:
+                i=-1
+            i-=1
+        j=b+1
+        while j<8 and T[a][j].color!=self.color:
+            p.append([a,j])
+            if T[a][j].color==(-1)*self.color:
+                j=8
+            j+=1
+        j=b-1
+        while j>-1 and T[a][j].color!=self.color:
+            p.append([a,j])
+            if T[a][j].color==(-1)*self.color:
+                j=-1
+            j-=1
+        return p
+
+
+class Pion():
+    def __init__(self,color):
+        self.color=color
+
+    def possibilités_aveugles(self,a,b,T):
+        p=[]
+        if a in range(1,7):
+            #déplacement normal
+            if T[a+self.color][b].color==0:
+                p.append([a+self.color,b])
+
+            #déplacement de deux cases du début
+            if self.color==1 and a==1 and T[a+1][b].color==0 and T[a+2][b].color==0:
+                p.append([a+2,b])
+            if self.color==-1 and a==6 and T[a-1][b].color==0 and T[a-2][b].color==0:
+                p.append([a-2,b])
+
+            #déplacement du fait de la mangeaison d'une pièce adverse
+            for k in [1,-1]:
+                if T[a+self.color][b+k].color==(-1)*self.color:
+                    p.append([a+self.color,b+k])
+        return p
+
+
+
+#initialisation du tableau
+
+T=[]
+for i in range(8):
+    T.append([])
+for i in range(8):
+    for j in range(8):
+        T[i].append(Vide())
+
+T[0][1]=Cavalier(1)
+T[0][6]=Cavalier(1)
+T[0][7]=Tour(1)
+T[0][0]=Tour(1)
+for k in range(8):
+    T[1][k]=Pion(1)
+
+T[7][1]=Cavalier(-1)
+T[7][6]=Cavalier(-1)
+T[7][7]=Tour(-1)
+T[7][0]=Tour(-1)
+for k in range(8):
+    T[6][k]=Pion(-1)
+
+
+Print(T[1][6].possibilités_aveugles(1,6,T))
