@@ -3,7 +3,7 @@ class Vide():
     def __init__(self):
         self.color=0
 
-    def possibiltés(self,a,b,T):
+    def possibiltés(self,a,b):
         return []
 
 
@@ -12,7 +12,7 @@ class Cavalier():
     def __init__(self,color):
         self.color=color
 
-    def possibilités_aveugles(self,a,b,T):
+    def possibilités_aveugles(self,a,b):
         p=[]
         for i in range(a-2,a+3):
             for j in range(b-2,b+3):
@@ -24,7 +24,7 @@ class Tour():
     def __init__(self,color):
         self.color=color
 
-    def possibilités_aveugles(self,a,b,T):
+    def possibilités_aveugles(self,a,b):
         p=[]
         i=a+1
         while i<8 and T[i][b].color!=self.color:
@@ -57,7 +57,7 @@ class Pion():
     def __init__(self,color):
         self.color=color
 
-    def possibilités_aveugles(self,a,b,T):
+    def possibilités_aveugles(self,a,b):
         p=[]
         if a in range(1,7):
             #déplacement normal
