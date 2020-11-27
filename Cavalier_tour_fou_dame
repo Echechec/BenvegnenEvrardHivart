@@ -1,0 +1,178 @@
+## Initialisation d'un plateau abstrait (genre ya même pas de vide dedans)
+
+G = []
+for i in range(8):
+    g = []
+    for j in range(8):
+        g += [0]
+    G += [g]
+
+## Classes pièces
+
+#La couleur noir correspond à -1, blanc à 1. La couleur d'une case inocuppée est 0
+
+class Vide():
+
+    def __init__(self):
+         self.couleur = 0
+
+
+
+class Cavalier():
+
+    def __init__(self,coul):
+        self.couleur = coul
+
+
+    def possibilites(self,a,b):
+        __Cases = []
+        for c in range(a-2,a+3):
+            for d in range(b-2,b+3):
+                i = a-c
+                j = b-d
+                print(c,d)
+                if i**2+j**2 == 5 and c < 8 and c > -1 and d < 8 and d > -1 and G[c][d].couleur != self.couleur :
+                        __Cases += [(c,d)]
+        print(__Cases)
+
+
+class Tour():
+    def __init__(self,couleur):
+        self.couleur=couleur
+
+    def possibilites(self,a,b):
+        __Cases = []
+        c = a+1
+        while c < 8 and G[c][b].couleur != self.couleur:
+            __Cases.append((c,b))
+            if G[c][b].couleur == (-1)*self.couleur:
+                c = 8
+            c += 1
+        c = a-1
+        while c > -1 and G[c][b].couleur != self.couleur:
+            __Cases.append((c,b))
+            if G[c][b].couleur == (-1)*self.couleur:
+                c = -1
+            c -= 1
+        d = b+1
+        while d < 8 and G[a][d].couleur != self.couleur:
+            __Cases.append((a,d))
+            if G[a][d].couleur == (-1)*self.couleur:
+                d = 8
+            d += 1
+        d = b-1
+        while d > -1 and G[a][d].couleur != self.couleur:
+            __Cases.append((a,d))
+            if G[a][d].couleur == (-1)*self.couleur:
+                d = -1
+            d -= 1
+        return __Cases
+
+
+class Fou():
+    def __init__(self,couleur):
+        self.couleur=couleur
+
+    def possibilites(self,a,b):
+        __Cases = []
+        l = 1
+        while a+l < 8 and b+l < 8 and G[a+l][b+l].couleur != self.couleur:
+            __Cases.append((a+l,b+l))
+            if G[a+l][b+l].couleur == (-1)*self.couleur:
+                l = 8
+            l += 1
+        l = 1
+        while a-l > -1 and b-l > -1 and G[a-l][b-l].couleur != self.couleur:
+            __Cases.append((a-l,b-l))
+            if G[a-l][b-l].couleur == (-1)*self.couleur:
+                l = -1
+            l -= 1
+        l = 1
+        while a+l < 8 and b-l > -1 and G[a+l][b-l].couleur != self.couleur:
+            __Cases.append((a+l,b-l))
+            if G[a+l][b-l].couleur == (-1)*self.couleur:
+                l = 8
+            l += 1
+        l = 1
+        while a-l > -1 and b+l < 8 and G[a-l][b+l].couleur != self.couleur:
+            __Cases.append((a-l,b+l))
+            if G[a-l][b+l].couleur == (-1)*self.couleur:
+                l = -1
+            l -= 1
+        return __Cases
+
+
+
+class Dame():
+
+    def __init__(self,coul):
+        self.couleur = coul
+
+    def possibilites(self,a,b):
+        __Cases = []
+        l = 1
+        while a+l < 8 and b+l < 8 and G[a+l][b+l].couleur != self.couleur:
+            __Cases.append((a+l,b+l))
+            if G[a+l][b+l].couleur == (-1)*self.couleur:
+                l = 8
+            l += 1
+        l = 1
+        while a-l > -1 and b-l > -1 and G[a-l][b-l].couleur != self.couleur:
+            __Cases.append((a-l,b-l))
+            if G[a-l][b-l].couleur == (-1)*self.couleur:
+                l = -1
+            l -= 1
+        l = 1
+        while a+l < 8 and b-l > -1 and G[a+l][b-l].couleur != self.couleur:
+            __Cases.append((a+l,b-l))
+            if G[a+l][b-l].couleur == (-1)*self.couleur:
+                l = 8
+            l += 1
+        l = 1
+        while a-l > -1 and b+l < 8 and G[a-l][b+l].couleur != self.couleur:
+            __Cases.append((a-l,b+l))
+            if G[a-l][b+l].couleur == (-1)*self.couleur:
+                l = -1
+            l -= 1
+        c = a+1
+        while c < 8 and G[c][b].couleur != self.couleur:
+            __Cases.append((c,b))
+            if G[c][b].couleur == (-1)*self.couleur:
+                c = 8
+            c += 1
+        c = a-1
+        while c > -1 and G[c][b].couleur != self.couleur:
+            __Cases.append((c,b))
+            if G[c][b].couleur == (-1)*self.couleur:
+                c = -1
+            c -= 1
+        d = b+1
+        while d < 8 and G[a][d].couleur != self.couleur:
+            __Cases.append((a,d))
+            if G[a][d].couleur == (-1)*self.couleur:
+                d = 8
+            d += 1
+        d = b-1
+        while d > -1 and G[a][d].couleur != self.couleur:
+            __Cases.append((a,d))
+            if G[a][d].couleur == (-1)*self.couleur:
+                d = -1
+            d -= 1
+        return __Cases
+
+## Mise en situation
+
+for i in range(8):
+    for j in range(8):
+        V = Vide()
+        G[i][j] = V
+
+
+C = Cavalier(1)
+G[3][4] = C
+T = Tour(-1)
+G[2][2] = T
+F = Fou(1)
+G[0][5] = F
+D = Dame(-1)
+G[5][5] = D
