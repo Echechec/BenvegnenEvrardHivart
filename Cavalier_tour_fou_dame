@@ -159,6 +159,23 @@ class Dame():
                 d = -1
             d -= 1
         return __Cases
+        
+        
+class Roi():
+    def __init__(self,coul):
+        self.couleur = coul
+
+    def possibilites(self,a,b):
+        __Cases = []
+        for i in [-1, 0, 1]:
+            for j in [-1, 0, 1]:
+                c=a+i
+                d=b+j
+                if G[c][d].couleur!=self.couleur and c<8 and d<8:
+                    __Cases.append((c,d))
+        return(__Cases)
+                
+    
 
 ## Mise en situation
 
