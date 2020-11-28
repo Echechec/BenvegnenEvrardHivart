@@ -281,7 +281,7 @@ if G[X][Y].type == "Roi" or G[X][Y].type == "Tour":
     petitRoque = not(vulnerabilite(L,4,-cou) or vulnerabilite(L,5,-cou) or vulnerabilite(L,6,-cou) or vulnerabilite(L,7,-cou))
     
 # Cas du roi
-    if G[X][Y].type == "Roi" and not(G[X][Y].virginite):
+    if G[X][Y].type == "Roi" and G[X][Y].virginite:
         if  G[L][5] == "Vide" and G[L][6] == "Vide" and petitRoque:
             possibiliteExtra += (L,6)
         if G[L][3] == "Vide" and G[L][2] == "Vide" and G[L][1] == "Vide" and grandRoque:
@@ -289,7 +289,7 @@ if G[X][Y].type == "Roi" or G[X][Y].type == "Tour":
     
 
 # Cas de la tour
-    if G[X][Y].type == "Tour" and not(G[X][Y].virginite):
+    if G[X][Y].type == "Tour" and G[X][Y].virginite:
         if  G[L][5] == "Vide" and G[L][6] == "Vide" and petitRoque:
             possibiliteExtra += (L,5)
         if G[L][3] == "Vide" and G[L][2] == "Vide" and G[L][1] == "Vide" and grandRoque:
