@@ -198,6 +198,43 @@ class Roi():
                     __Cases.append((c,d))
         return(__Cases)
                 
+def InitPlateau():
+    G = []
+    for i in range(8):
+        g = []
+        for j in range(8):
+            g += [0]
+        G += [g]
+        
+    G[0][0]=Tour(1)
+    G[0][7]=Tour(1)
+    G[7][0]=Tour(-1)
+    G[7][7]=Tour(-1)
+    
+    G[0][1]=Cavalier(1)
+    G[0][6]=Cavalier(1)
+    G[7][1]=Cavalier(-1)
+    G[7][6]=Cavalier(-1)
+    
+    G[0][2]=Fou(1)
+    G[0][5]=Fou(1)
+    G[7][2]=Fou(-1)
+    G[7][5]=Fou(-1)
+    
+    G[0][3]=Roi(1)
+    G[0][4]=Dame(1)
+    G[7][3]=Roi(-1)
+    G[7][4]=Dame(-1)
+    
+    for i in range [8]:
+        G[1][i]=Pion(1)
+        G[6][i]=Pion(-1)
+    V=Vide()
+    for i in range [8]:
+        for j in range[2, 6]:
+            G[i][j]=V
+                
+               
     
 
 ## Mise en situation
