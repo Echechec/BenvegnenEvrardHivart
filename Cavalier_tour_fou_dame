@@ -277,23 +277,23 @@ if G[X][Y].type == "Roi" or G[X][Y].type == "Tour":
 
     cou = G[X][Y].couleur
     L = G[X][Y].ligneInitiale 
-    grandRoque = vulnerabilite(L,0,-cou) or vulnerabilite(L,1,-cou) or vulnerabilite(L,2,-cou) or vulnerabilite(L,3,-cou) or vulnerabilite(L,4,-cou) 
-    petitRoque = vulnerabilite(L,5,-cou) or vulnerabilite(L,6,-cou) or vulnerabilite(L,7,-cou)
+    grandRoque = not(vulnerabilite(L,0,-cou) or vulnerabilite(L,1,-cou) or vulnerabilite(L,2,-cou) or vulnerabilite(L,3,-cou) or vulnerabilite(L,4,-cou)) 
+    petitRoque = not(vulnerabilite(L,4,-cou) or vulnerabilite(L,5,-cou) or vulnerabilite(L,6,-cou) or vulnerabilite(L,7,-cou))
     
 # Cas du roi
-    if G[X][Y].type == "Roi" and G[X][Y].virginite == False:
-        if  G[L][5] == "Vide" and G[L][6] == "Vide" and petitRoque == False:
+    if G[X][Y].type == "Roi" and not(G[X][Y].virginite):
+        if  G[L][5] == "Vide" and G[L][6] == "Vide" and petitRoque:
             possibiliteExtra += (L,6)
-        if G[L][3] == "Vide" and G[L][2] == "Vide" and G[L][1] == "Vide" and grandRoque == False:
+        if G[L][3] == "Vide" and G[L][2] == "Vide" and G[L][1] == "Vide" and grandRoque:
             possibilitesExtra += (L,2)
     
 
 # Cas de la tour
-    if G[X][Y].type == "Tour" and G[X][Y].virginite == False:
-        if  G[L][5] == "Vide" and G[L][6] == "Vide" and grandRoque == False:
+    if G[X][Y].type == "Tour" and not(G[X][Y].virginite):
+        if  G[L][5] == "Vide" and G[L][6] == "Vide" and petitRoque:
             possibiliteExtra += (L,5)
-        if G[L][3] == "Vide" and G[L][2] == "Vide" and G[L][1] == "Vide" grandRoque == False:
-                possibilitesExtra += (L,3)
+        if G[L][3] == "Vide" and G[L][2] == "Vide" and G[L][1] == "Vide" and grandRoque:
+            possibilitesExtra += (L,3)
 
 
 C = Cavalier(1)
