@@ -203,7 +203,7 @@ def vulnerabilite(a,b,coul):
     for c in range(8):
         for d in range(8):
             if G[c][d].couleur==coul:
-                if (a,b) in G.possibilitesAbsolues(c,d):
+                if (a,b) in G[c][d].possibilitesAbsolues(c,d):
                     return True                
     return False                
                 
