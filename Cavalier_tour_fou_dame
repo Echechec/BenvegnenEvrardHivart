@@ -198,6 +198,21 @@ class Roi():
                     __Cases.append((c,d))
         return(__Cases)
                 
+#la fonction qui teste si la case (a,b) est dans la ligne de mire d'une pièce de couleur "coul"
+def vulnerabilite(a,b,coul):
+    
+    for c in range(8):
+        for d in range(8):
+            if G[c][d].couleur==coul:
+                if (a,b) in G.possibilitesAbsolues(c,d):
+                    return True
+                    
+    return e                
+                
+#(Ab,Bb) position du roi blanc
+#(An,Bn) position du roi noir
+#(X,Y) case sur laquelle l'utilisateur clique au début de son tour
+            
 ## Programme principal 
     
     G = []
