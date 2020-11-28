@@ -35,8 +35,8 @@ class Pion():
 
 class Cavalier():
 
-    def __init__(self,coul):
-        self.couleur = coul
+    def __init__(self,couleur):
+        self.couleur = couleur
         self.ligneInitiale = (-3.5*couleur+3.5)
 
 
@@ -124,8 +124,8 @@ class Fou():
 
 class Dame():
 
-    def __init__(self,coul):
-        self.couleur = coul
+    def __init__(self,couleur):
+        self.couleur = couleur
         self.ligneInitiale = (-3.5*couleur+3.5)
 
     def possibilitesAbsolues(self,a,b):
@@ -182,8 +182,8 @@ class Dame():
         
         
 class Roi():
-    def __init__(self,coul):
-        self.couleur = coul
+    def __init__(self,couleur):
+        self.couleur = couleur
         self.ligneInitiale = (-3.5*couleur+3.5)
         self.virginite = True
 
@@ -198,11 +198,11 @@ class Roi():
         return(__Cases)
                 
 #la fonction qui teste si la case (a,b) est dans la ligne de mire d'une pièce de couleur "coul"
-def vulnerabilite(a,b,coul):
+def vulnerabilite(a,b,couleur):
     
     for c in range(8):
         for d in range(8):
-            if G[c][d].couleur==coul:
+            if G[c][d].couleur == couleur:
                 if (a,b) in G[c][d].possibilitesAbsolues(c,d):
                     return True                
     return False                
