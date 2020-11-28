@@ -32,7 +32,7 @@ class Pion():
 
             #déplacement de deux cases du début
             if a == self.ligneInitiale+self.couleur and G[a+self.couleur][b].couleur == 0 and G[a+2*self.couleur][b].couleur == 0:
-                __Cases.append((a+2*self.couleur,b)
+                __Cases.append((a+2*self.couleur,b))
             
 
             #déplacement du fait de la mangeaison d'une pièce adverse
