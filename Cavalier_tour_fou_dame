@@ -25,18 +25,18 @@ class Pion():
         __Cases=[]
         if a in range(1,7):
             #déplacement normal
-            if T[a+self.couleur][b].couleur == 0:
+            if G[a+self.couleur][b].couleur == 0:
                 __Cases.append((a+self.couleur,b))
 
             #déplacement de deux cases du début
-            if self.couleur == 1 and a == 1 and T[a+1][b].couleur == 0 and T[a+2][b].couleur == 0:
+            if self.couleur == 1 and a == 1 and G[a+1][b].couleur == 0 and G[a+2][b].couleur == 0:
                 __Cases.append((a+2,b)
-            if self.couleur == -1 and a == 6 and T[a-1][b].couleur == 0 and T[a-2][b].couleur == 0:
+            if self.couleur == -1 and a == 6 and G[a-1][b].couleur == 0 and G[a-2][b].couleur == 0:
                 __Cases.append((a-2,b))
 
             #déplacement du fait de la mangeaison d'une pièce adverse
             for k in [1,-1]:
-                if T[a+self.couleur][b+k].couleur == (-1)*self.couleur:
+                if G[a+self.couleur][b+k].couleur == (-1)*self.couleur:
                     __Cases.append((a+self.couleur,b+k)
         return __Cases
         
