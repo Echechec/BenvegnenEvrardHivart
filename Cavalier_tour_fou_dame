@@ -271,29 +271,31 @@ else:
     
 ## Roque, c'est rock'n roll croyez-moi
 
-possibiliteExtra == []
+#roquabilite vaut [True,True] si les deux roques sont possibles (donc si le joueur a sélectionné le roi), [True,Flase] si le petit roque est possible, [False,True] si le grand roque est possible.
+
+roquabilite == [False,False]
 
 if G[X][Y].type == "Roi" or G[X][Y].type == "Tour":
 
     cou = G[X][Y].couleur
     L = G[X][Y].ligneInitiale 
-    grandRoque = not(vulnerabilite(L,0,-cou) or vulnerabilite(L,1,-cou) or vulnerabilite(L,2,-cou) or vulnerabilite(L,3,-cou) or vulnerabilite(L,4,-cou)) 
-    petitRoque = not(vulnerabilite(L,4,-cou) or vulnerabilite(L,5,-cou) or vulnerabilite(L,6,-cou) or vulnerabilite(L,7,-cou))
+    petitRoque = not(vulnerabilite(L,0,-cou) or vulnerabilite(L,1,-cou) or vulnerabilite(L,2,-cou) or vulnerabilite(L,3,-cou)) 
+    grandRoque = not(vulnerabilite(L,3,-cou) or vulnerabilite(L,4,-cou) or vulnerabilite(L,5,-cou) or vulnerabilite(L,6,-cou) or vulnerabilite(L,7,-cou))
     
 # Cas du roi
     if G[X][Y].type == "Roi" and G[X][Y].virginite:
         if  G[L][5] == "Vide" and G[L][6] == "Vide" and petitRoque:
-            possibiliteExtra += (L,6)
+            roquabilite[0] = True
         if G[L][3] == "Vide" and G[L][2] == "Vide" and G[L][1] == "Vide" and grandRoque:
-            possibilitesExtra += (L,2)
-    
+            roquabilite[1] = True    
 
 # Cas de la tour
-    if G[X][Y].type == "Tour" and G[X][Y].virginite:
+    if G[X][Y].type == "Tour" and G[X][Y].virginite and Y = 0 :
         if  G[L][5] == "Vide" and G[L][6] == "Vide" and petitRoque:
-            possibiliteExtra += (L,5)
+            roquabilite[0] = True
+    if G[X][Y].type == "Tour" and G[X][Y].virginite and Y = 7 :        
         if G[L][3] == "Vide" and G[L][2] == "Vide" and G[L][1] == "Vide" and grandRoque:
-            possibilitesExtra += (L,3)
+            roquabilite[1] = True
 
 
 C = Cavalier(1)
