@@ -38,7 +38,7 @@ class Pion():
             #déplacement du fait de la mangeaison d'une pièce adverse
             for k in [1,-1]:
                 if G[a+self.couleur][b+k].couleur == (-1)*self.couleur:
-                    __Cases.append((a+self.couleur,b+k)
+                    __Cases.append((a+self.couleur,b+k))
         return __Cases
         
 
