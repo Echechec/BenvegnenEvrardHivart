@@ -204,9 +204,8 @@ def vulnerabilite(a,b,coul):
         for d in range(8):
             if G[c][d].couleur==coul:
                 if (a,b) in G.possibilitesAbsolues(c,d):
-                    return True
-                    
-    return e                
+                    return True                
+    return False                
                 
 #(Ab,Bb) position du roi blanc
 #(An,Bn) position du roi noir
