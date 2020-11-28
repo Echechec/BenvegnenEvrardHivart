@@ -271,6 +271,30 @@ if Tirage==H:
     print(J1, "joue les blancs")
 else:
     print(J2, "joue les blancs")
+    
+## Roque, c'est rock'n roll croyez-moi
+
+possibiliteExtra == []
+
+cou = G[X][Y].couleur
+l = G[X][Y].ligneInitiale 
+grandRoque = vulnerabilite(l,0,-cou) or vulnerabilite(l,1,-cou) or vulnerabilite(l,2,-cou) or vulnerabilite(l,3,-cou) or vulnerabilite(l,4,-cou) 
+petitRoque = vulnerabilite(l,5,-cou) or vulnerabilite(l,6,-cou) or vulnerabilite(l,7,-cou)
+    
+# Cas du roi
+if G[X][Y] == R and G[X][Y].virginite == False:
+    if  G[l][5] == V and G[l][6] == V and petitRoque == False:
+        possibiliteExtra += (l,6)
+    if G[l][3] == V and G[l][2] == V and G[l][1] == V and grandRoque == False:
+        possibilitesExtra += (l,2)
+    
+
+# Cas de la tour
+if G[X][Y] == T and G[X][Y].virginite == False:
+    if  G[l][5] == V and G[l][6] == V and grandRoque == False:
+        possibiliteExtra += (l,5)
+    if G[l][3] == V and G[l][2] == V and G[l][1] == V grandRoque == False:
+            possibilitesExtra += (l,3)
 
 
 C = Cavalier(1)
