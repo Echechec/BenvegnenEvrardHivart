@@ -276,7 +276,8 @@ else:
 
 roquabilite == [False,False]
 
-if G[X][Y].type == "Roi" or G[X][Y].type == "Tour":
+if G[X][Y].type == "Roi" 
+# or G[X][Y].type == "Tour": --> On ne sait pas si on garde le cas de la tour 
 
     cou = G[X][Y].couleur
     L = G[X][Y].ligneInitiale 
@@ -285,16 +286,16 @@ if G[X][Y].type == "Roi" or G[X][Y].type == "Tour":
     
 # Cas du roi
     if G[X][Y].type == "Roi" and G[X][Y].virginite:
-        if  G[L][5] == "Vide" and G[L][6] == "Vide" and petitRoque:
+        if  G[L][5] == "Vide" and G[L][6] == "Vide" and petitRoque and G[L][7].type == "Tour" and G[L][7].virginite :
             roquabilite[0] = True
-        if G[L][3] == "Vide" and G[L][2] == "Vide" and G[L][1] == "Vide" and grandRoque:
+        if G[L][3] == "Vide" and G[L][2] == "Vide" and G[L][1] == "Vide" and grandRoque and G[L][0].type == "Tour" and G[L][0].virginite:
             roquabilite[1] = True    
 
-# Cas de la tour
-    if G[X][Y].type == "Tour" and G[X][Y].virginite and Y == 0 :
-        if  G[L][5] == "Vide" and G[L][6] == "Vide" and petitRoque:
+# Cas de la tour --> On ne sait pas si on garde le cas de la tour
+    if G[X][Y].type == "Tour" and G[X][Y].virginite and Y == 0 and G[L][3].type == "Roi" and G[L][3].virginite:
+        if  G[L][5] == "Vide" and G[L][6] == "Vide" and petitRoque and G[L][3].virginite:
             roquabilite[0] = True
-    if G[X][Y].type == "Tour" and G[X][Y].virginite and Y == 7 :        
+    if G[X][Y].type == "Tour" and G[X][Y].virginite and Y == 7 and G[L][3].type == "Roi" and G[L][3].virginite:        
         if G[L][3] == "Vide" and G[L][2] == "Vide" and G[L][1] == "Vide" and grandRoque:
             roquabilite[1] = True
 
