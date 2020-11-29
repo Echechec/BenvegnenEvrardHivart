@@ -1,3 +1,4 @@
+from random import *
 ## Classes pièces
 
 #La couleur noir correspond à -1, blanc à 1. La couleur d'une case inocuppée est 0
