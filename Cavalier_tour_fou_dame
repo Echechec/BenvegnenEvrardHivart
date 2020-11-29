@@ -291,10 +291,10 @@ if G[X][Y].type == "Roi" or G[X][Y].type == "Tour":
             roquabilite[1] = True    
 
 # Cas de la tour
-    if G[X][Y].type == "Tour" and G[X][Y].virginite and Y = 0 :
+    if G[X][Y].type == "Tour" and G[X][Y].virginite and Y == 0 :
         if  G[L][5] == "Vide" and G[L][6] == "Vide" and petitRoque:
             roquabilite[0] = True
-    if G[X][Y].type == "Tour" and G[X][Y].virginite and Y = 7 :        
+    if G[X][Y].type == "Tour" and G[X][Y].virginite and Y == 7 :        
         if G[L][3] == "Vide" and G[L][2] == "Vide" and G[L][1] == "Vide" and grandRoque:
             roquabilite[1] = True
 
