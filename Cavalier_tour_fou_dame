@@ -36,14 +36,15 @@ class Pion():
                     __Cases.append((a+self.couleur,b+k))
                     
             #Prise en passant
-            if a == self.ligneInitiale + self.couleur*4:
+            if a == self.ligneInitiale + self.couleur*4 and if imprudence:
                 if G[a][b+1].type == "Pion" and G[a][b+1].couleur == -self.couleur and G[a+self.couleur][b+1] == "Vide":
                     __Cases.append((a+self.couleur,b+1))
                 if G[a][b-1].type == "Pion" and G[a][b-1].couleur == -self.couleur and G[a+self.couleur][b-1] == "Vide":
                     __Cases.append((a+self.couleur,b-1))    
 
         return __Cases
-        
+
+#imprudence est un booléen activé lorsqu'un pion avance de 2, et immédiatement désacivé le coup suivant
  
 class Cavalier():
 
