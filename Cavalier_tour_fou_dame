@@ -34,9 +34,17 @@ class Pion():
             for k in [1,-1]:
                 if G[a+self.couleur][b+k].couleur == (-1)*self.couleur:
                     __Cases.append((a+self.couleur,b+k))
+                    
+            #Prise en passant
+            if a == self.ligneInitiale + self.couleur*4:
+                if G[a][b+1].type == "Pion" and G[a][b+1].couleur == -self.couleur and G[a+self.couleur][b+1] == "Vide":
+                    __Cases.append((a+self.couleur,b+1))
+                if G[a][b-1].type == "Pion" and G[a][b-1].couleur == -self.couleur and G[a+self.couleur][b-1] == "Vide":
+                    __Cases.append((a+self.couleur,b-1))    
+
         return __Cases
         
-
+ 
 class Cavalier():
 
     def __init__(self,couleur):
