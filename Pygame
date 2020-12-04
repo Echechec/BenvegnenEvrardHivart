@@ -1,0 +1,107 @@
+import pygame
+
+class GameState():
+    def __init__(self):
+        self.board=[
+            ["Tn", "Cn", "Fn", "Dn", "Rn", "Fn", "Cn", "Tn"],
+            ["pn", "pn", "pn", "pn", "pn", "pn", "pn", "pn"],
+            ["_", "_", "_", "_", "_", "_", "_", "_"],
+            ["_", "_", "_", "_", "_", "_", "_", "_"],
+            ["_", "_", "_", "_", "_", "_", "_", "_"],
+            ["_", "_", "_", "_", "_", "_", "_", "_"],
+            ["pb", "pb", "pb", "pb", "pb", "pb", "pb", "pb"],
+            ["Tb", "Cb", "Fb", "Db", "Rb", "Fb", "Cb", "Tb"]
+        ]
+        self.whiteToMove = True
+        self.moveLog=[]
+
+    def MakeMove(self, move):
+        self.board[move.depart_ligne][move.depart_colonne] = "_"
+        self.board[move.arrivee_ligne][move.arrivee_colonne] = move.piece_deplacee
+        self.moveLog.append(move)
+        self.whiteToMove = not self.whiteToMove
+        
+class Deplacement():
+
+    def __init__(self, depart, arrivee, board):
+        self.depart_ligne = depart[0]
+        self.depart_colonne = depart[1]
+        self.arrivee_ligne = arrivee[0]
+        self.arrivee_colonne = arrivee[1]
+        self.piece_deplacee = board[self.depart_ligne][self.depart_colonne]
+        self.piece_capturee = board[self.arrivee_ligne][self.arrivee_colonne]
+
+
+Longueur = Largeur = 512
+Dimension = 8
+Taille_Carre = Longueur // Dimension
+image = {}
+
+def LoadImage():
+    pieces = ["Tn", "Tb", "Cb", "Cn", "Fn", "Fb", "pn", "pb", "Rn", "Rb", "Dn", "Db"]
+    for piece in pieces:
+        image[piece] = pygame.transform.scale(pygame.image.load("Images/" + piece + ".png"), ((Taille_Carre), (Taille_Carre)))
+
+
+
+def main():
+
+    pygame.init()
+
+    screen = pygame.display.set_mode((Longueur, Largeur))
+    clock = pygame.time.Clock()
+    A=GameState()
+    G=A.board
+    pygame.display.set_caption("Échecs")
+    icon = pygame.image.load('chess.png')
+    pygame.display.set_icon(icon)
+    screen.fill((0, 0, 0))
+    LoadImage()
+
+    running = True
+    Case_Selectionnee=()
+    Cliques = []
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+               running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                location = pygame.mouse.get_pos()
+                Ligne = location[1]//Taille_Carre
+                Colonne = location[0]//Taille_Carre
+                if Case_Selectionnee == (Ligne, Colonne):
+                    Case_Selectionnee = ()
+                    Cliques = []
+                else:
+                    Case_Selectionnee = (Ligne, Colonne)
+                    Cliques.append(Case_Selectionnee)
+                if len(Cliques) == 2:
+                    deplacement = Deplacement(Cliques[0], Cliques[1], G)
+                    A.MakeMove(deplacement)
+                    Case_Selectionnee = ()
+                    Cliques = []
+
+        drawGameState(screen, G)
+        pygame.display.flip()
+
+
+
+def drawGameState(screen, G):
+    drawBoard(screen)
+    drawPiece(screen, G)
+
+def drawBoard(srceen):
+    colors=[pygame.Color(106, 61, 26), pygame.Color(187, 118, 63)]
+    for i in range(Dimension):
+        for j in range(Dimension):
+            color = colors[((i+j)%2)]
+            pygame.draw.rect(srceen, color, pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre ))
+
+def drawPiece(screen, board):
+    for i in range(Dimension):
+        for j in range(Dimension):
+            piece = board[i][j]
+            if piece != "_":
+                screen.blit(image[piece], pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre ))
+
+main()      
