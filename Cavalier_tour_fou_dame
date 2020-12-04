@@ -339,7 +339,24 @@ class Roi():
             if G[L][3] == "Vide" and G[L][2] == "Vide" and G[L][1] == "Vide" and grandRoque and G[L][0].type == "Tour" and G[L][0].virginite:
                 r[1] = True
         return(r)
-                
+
+    def possibilites(self,a,b):
+        _Cases_absolues = self.possibilitesAbsolues(a,b)
+        _Cases_interdites = []
+        for i in _Cases_absolues:
+            (c,d) = i
+            memo = G[c][d]
+            G[c][d] = G[a][b]
+            G[a][b] = Vide()
+            if vulnerabilite(c,d,-1*self.couleur):
+                _Cases_interdites.append(i)
+            G[a][b] = G[c][d]
+            G[c][d] = memo
+        _Cases_autorisees = []
+        for i in _Cases_absolues :
+            if not i in _Cases_interdites :
+                _Cases_autorisees.append(i)
+        return _Cases_autorisees
 
 #roquabilite renvoie [True,True] si les deux roques sont possibles (donc si le joueur a sélectionné le roi), [True,Flase] si le petit roque est possible, [False,True] si le grand roque est possible.
    
