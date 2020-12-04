@@ -215,7 +215,25 @@ class Roi():
                 if G[c][d].couleur!=self.couleur and c<8 and d<8:
                     __Cases.append((c,d))
         return(__Cases)
+        
+    def roquabilite():
+        r = [False,False]
+        cou = self.couleur
+        L = self.ligneInitiale 
+        petitRoque = not(vulnerabilite(L,0,-cou) or vulnerabilite(L,1,-cou) or vulnerabilite(L,2,-cou) or vulnerabilite(L,3,-cou)) 
+        grandRoque = not(vulnerabilite(L,3,-cou) or vulnerabilite(L,4,-cou) or vulnerabilite(L,5,-cou) or vulnerabilite(L,6,-cou) or vulnerabilite(L,7,-cou))
+        if self.virginite:
+            if  G[L][5] == "Vide" and G[L][6] == "Vide" and petitRoque and G[L][7].type == "Tour" and G[L][7].virginite :
+                r[0] = True
+            if G[L][3] == "Vide" and G[L][2] == "Vide" and G[L][1] == "Vide" and grandRoque and G[L][0].type == "Tour" and G[L][0].virginite:
+                r[1] = True
+        return(r)
                 
+
+#roquabilite renvoie [True,True] si les deux roques sont possibles (donc si le joueur a sélectionné le roi), [True,Flase] si le petit roque est possible, [False,True] si le grand roque est possible.
+   
+           
+           
 #la fonction qui teste si la case (a,b) est dans la ligne de mire d'une pièce de couleur "coul"
 def vulnerabilite(a,b,couleur):
     
@@ -281,34 +299,16 @@ if Tirage==H:
 else:
     print(J2, "joue les blancs")
     
-## Roque, c'est rock'n roll croyez-moi
-
-#roquabilite vaut [True,True] si les deux roques sont possibles (donc si le joueur a sélectionné le roi), [True,Flase] si le petit roque est possible, [False,True] si le grand roque est possible.
-
-roquabilite = [False,False]
-
-if G[X][Y].type == "Roi" 
-# or G[X][Y].type == "Tour": --> On ne sait pas si on garde le cas de la tour 
-
-    cou = G[X][Y].couleur
-    L = G[X][Y].ligneInitiale 
-    petitRoque = not(vulnerabilite(L,0,-cou) or vulnerabilite(L,1,-cou) or vulnerabilite(L,2,-cou) or vulnerabilite(L,3,-cou)) 
-    grandRoque = not(vulnerabilite(L,3,-cou) or vulnerabilite(L,4,-cou) or vulnerabilite(L,5,-cou) or vulnerabilite(L,6,-cou) or vulnerabilite(L,7,-cou))
     
-# Cas du roi
-    if G[X][Y].type == "Roi" and G[X][Y].virginite:
-        if  G[L][5] == "Vide" and G[L][6] == "Vide" and petitRoque and G[L][7].type == "Tour" and G[L][7].virginite :
-            roquabilite[0] = True
-        if G[L][3] == "Vide" and G[L][2] == "Vide" and G[L][1] == "Vide" and grandRoque and G[L][0].type == "Tour" and G[L][0].virginite:
-            roquabilite[1] = True    
-
+## Roque, c'est rock'n roll croyez-moi
 # Cas de la tour --> On ne sait pas si on garde le cas de la tour
-    if G[X][Y].type == "Tour" and G[X][Y].virginite and Y == 0 and G[L][3].type == "Roi" and G[L][3].virginite:
-        if  G[L][5] == "Vide" and G[L][6] == "Vide" and petitRoque and G[L][3].virginite:
-            roquabilite[0] = True
-    if G[X][Y].type == "Tour" and G[X][Y].virginite and Y == 7 and G[L][3].type == "Roi" and G[L][3].virginite:        
-        if G[L][3] == "Vide" and G[L][2] == "Vide" and G[L][1] == "Vide" and grandRoque:
-            roquabilite[1] = True
+# G[X][Y].type == "Tour":
+#    if G[X][Y].type == "Tour" and G[X][Y].virginite and Y == 0 and G[L][3].type == "Roi" and G[L][3].virginite:
+#        if  G[L][5] == "Vide" and G[L][6] == "Vide" and petitRoque and G[L][3].virginite:
+#            roquabilite[0] = True
+#    if G[X][Y].type == "Tour" and G[X][Y].virginite and Y == 7 and G[L][3].type == "Roi" and G[L][3].virginite:        
+#        if G[L][3] == "Vide" and G[L][2] == "Vide" and G[L][1] == "Vide" and grandRoque:
+#            roquabilite[1] = True
 
 
 C = Cavalier(1)
