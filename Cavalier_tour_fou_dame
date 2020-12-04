@@ -122,7 +122,7 @@ class Fou():
             __Cases.append((a-l,b-l))
             if G[a-l][b-l].couleur == (-1)*self.couleur:
                 l = -1
-            l -= 1
+            l += 1
         l = 1
         while a+l < 8 and b-l > -1 and G[a+l][b-l].couleur != self.couleur:
             __Cases.append((a+l,b-l))
@@ -134,7 +134,7 @@ class Fou():
             __Cases.append((a-l,b+l))
             if G[a-l][b+l].couleur == (-1)*self.couleur:
                 l = -1
-            l -= 1
+            l += 1
         return __Cases
 
 
@@ -159,7 +159,7 @@ class Dame():
             __Cases.append((a-l,b-l))
             if G[a-l][b-l].couleur == (-1)*self.couleur:
                 l = -1
-            l -= 1
+            l += 1
         l = 1
         while a+l < 8 and b-l > -1 and G[a+l][b-l].couleur != self.couleur:
             __Cases.append((a+l,b-l))
@@ -171,7 +171,7 @@ class Dame():
             __Cases.append((a-l,b+l))
             if G[a-l][b+l].couleur == (-1)*self.couleur:
                 l = -1
-            l -= 1
+            l += 1
         c = a+1
         while c < 8 and G[c][b].couleur != self.couleur:
             __Cases.append((c,b))
