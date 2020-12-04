@@ -17,6 +17,7 @@ class Pion():
         self.couleur = couleur
         self.ligneInitiale = (-3.5*couleur + 3.5)
         self.type = "Pion"
+        self.imprudence = False
         
     def possibilitesAbsolues(self,a,b):
         __Cases=[]
@@ -36,10 +37,10 @@ class Pion():
                     __Cases.append((a+self.couleur,b+k))
                     
             #Prise en passant
-            if a == self.ligneInitiale + self.couleur*4 and imprudence:
-                if G[a][b+1].type == "Pion" and G[a][b+1].couleur == -self.couleur and G[a+self.couleur][b+1] == "Vide":
+            if a == self.ligneInitiale + self.couleur*4 :
+                if G[a][b+1].type == "Pion" and G[a][b+1].couleur == -self.couleur and G[a][b+1].imprudence and G[a+self.couleur][b+1] == "Vide":
                     __Cases.append((a+self.couleur,b+1))
-                if G[a][b-1].type == "Pion" and G[a][b-1].couleur == -self.couleur and G[a+self.couleur][b-1] == "Vide":
+                if G[a][b-1].type == "Pion" and G[a][b-1].couleur == -self.couleur and G[a][b-1].imprudence and G[a+self.couleur][b-1] == "Vide":
                     __Cases.append((a+self.couleur,b-1))    
 
         return __Cases
@@ -284,7 +285,7 @@ else:
 
 #roquabilite vaut [True,True] si les deux roques sont possibles (donc si le joueur a sélectionné le roi), [True,Flase] si le petit roque est possible, [False,True] si le grand roque est possible.
 
-roquabilite == [False,False]
+roquabilite = [False,False]
 
 if G[X][Y].type == "Roi" 
 # or G[X][Y].type == "Tour": --> On ne sait pas si on garde le cas de la tour 
