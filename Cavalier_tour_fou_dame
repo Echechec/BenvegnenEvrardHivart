@@ -44,6 +44,29 @@ class Pion():
                     __Cases.append((a+self.couleur,b-1))
 
         return __Cases
+        
+   
+   def possibilites(self,a,b):
+        _Cases_absolues = self.possibilitesAbsolues(a,b)
+        _Cases_interdites = []
+        for i in _Cases_absolues:
+            (c,d) = i
+            memo = G[c][d]
+            G[c][d] = G[a][b]
+            G[a][b] = Vide()
+            if self.couleur == 1:
+                if vulnerabilite(Ab,Bb,-1):
+                    _Cases_interdites.append(i)
+            if self.couleur == -1:
+                if vulnerabilite(An,Bn,1):
+                    _Cases_interdites.append(i)
+            G[a][b] = G[c][d]
+            G[c][d] = memo
+        _Cases_autorisees = []
+        for i in _Cases_absolues :
+            if not i in _Cases_interdites :
+                _Cases_autorisees.append(i)
+        return _Cases_autorisees
 
 #imprudence est un booléen activé lorsqu'un pion avance de 2, et immédiatement désactivé le coup suivant
  
@@ -65,6 +88,28 @@ class Cavalier():
                 if i**2+j**2 == 5 and c < 8 and c > -1 and d < 8 and d > -1 and G[c][d].couleur != self.couleur :
                         __Cases += [(c,d)]
         print(__Cases)
+        
+    def possibilites(self,a,b):
+        _Cases_absolues = self.possibilitesAbsolues(a,b)
+        _Cases_interdites = []
+        for i in _Cases_absolues:
+            (c,d) = i
+            memo = G[c][d]
+            G[c][d] = G[a][b]
+            G[a][b] = Vide()
+            if self.couleur == 1:
+                if vulnerabilite(Ab,Bb,-1):
+                    _Cases_interdites.append(i)
+            if self.couleur == -1:
+                if vulnerabilite(An,Bn,1):
+                    _Cases_interdites.append(i)
+            G[a][b] = G[c][d]
+            G[c][d] = memo
+        _Cases_autorisees = []
+        for i in _Cases_absolues :
+            if not i in _Cases_interdites :
+                _Cases_autorisees.append(i)
+        return _Cases_autorisees
 
 
 class Tour():
@@ -101,6 +146,28 @@ class Tour():
                 d = -1
             d -= 1
         return __Cases
+        
+    def possibilites(self,a,b):
+        _Cases_absolues = self.possibilitesAbsolues(a,b)
+        _Cases_interdites = []
+        for i in _Cases_absolues:
+            (c,d) = i
+            memo = G[c][d]
+            G[c][d] = G[a][b]
+            G[a][b] = Vide()
+            if self.couleur == 1:
+                if vulnerabilite(Ab,Bb,-1):
+                    _Cases_interdites.append(i)
+            if self.couleur == -1:
+                if vulnerabilite(An,Bn,1):
+                    _Cases_interdites.append(i)
+            G[a][b] = G[c][d]
+            G[c][d] = memo
+        _Cases_autorisees = []
+        for i in _Cases_absolues :
+            if not i in _Cases_interdites :
+                _Cases_autorisees.append(i)
+        return _Cases_autorisees
 
 
 class Fou():
@@ -136,6 +203,28 @@ class Fou():
                 l = -1
             l += 1
         return __Cases
+        
+    def possibilites(self,a,b):
+        _Cases_absolues = self.possibilitesAbsolues(a,b)
+        _Cases_interdites = []
+        for i in _Cases_absolues:
+            (c,d) = i
+            memo = G[c][d]
+            G[c][d] = G[a][b]
+            G[a][b] = Vide()
+            if self.couleur == 1:
+                if vulnerabilite(Ab,Bb,-1):
+                    _Cases_interdites.append(i)
+            if self.couleur == -1:
+                if vulnerabilite(An,Bn,1):
+                    _Cases_interdites.append(i)
+            G[a][b] = G[c][d]
+            G[c][d] = memo
+        _Cases_autorisees = []
+        for i in _Cases_absolues :
+            if not i in _Cases_interdites :
+                _Cases_autorisees.append(i)
+        return _Cases_autorisees
 
 
 
@@ -197,6 +286,28 @@ class Dame():
                 d = -1
             d -= 1
         return __Cases
+
+    def possibilites(self,a,b):
+        _Cases_absolues = self.possibilitesAbsolues(a,b)
+        _Cases_interdites = []
+        for i in _Cases_absolues:
+            (c,d) = i
+            memo = G[c][d]
+            G[c][d] = G[a][b]
+            G[a][b] = Vide()
+            if self.couleur == 1:
+                if vulnerabilite(Ab,Bb,-1):
+                    _Cases_interdites.append(i)
+            if self.couleur == -1:
+                if vulnerabilite(An,Bn,1):
+                    _Cases_interdites.append(i)
+            G[a][b] = G[c][d]
+            G[c][d] = memo
+        _Cases_autorisees = []
+        for i in _Cases_absolues :
+            if not i in _Cases_interdites :
+                _Cases_autorisees.append(i)
+        return _Cases_autorisees
         
         
 class Roi():
