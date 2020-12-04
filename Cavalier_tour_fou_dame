@@ -31,7 +31,7 @@ class Pion():
                 __Cases.append((a+2*self.couleur,b))
             
 
-            #déplacement du fait de la mangeaison d'une pièce adverse
+            #déplacement pour manger une pièce adverse
             for k in [1,-1]:
                 if G[a+self.couleur][b+k].couleur == (-1)*self.couleur:
                     __Cases.append((a+self.couleur,b+k))
@@ -41,11 +41,11 @@ class Pion():
                 if G[a][b+1].type == "Pion" and G[a][b+1].couleur == -self.couleur and G[a][b+1].imprudence and G[a+self.couleur][b+1] == "Vide":
                     __Cases.append((a+self.couleur,b+1))
                 if G[a][b-1].type == "Pion" and G[a][b-1].couleur == -self.couleur and G[a][b-1].imprudence and G[a+self.couleur][b-1] == "Vide":
-                    __Cases.append((a+self.couleur,b-1))    
+                    __Cases.append((a+self.couleur,b-1))
 
         return __Cases
 
-#imprudence est un booléen activé lorsqu'un pion avance de 2, et immédiatement désacivé le coup suivant
+#imprudence est un booléen activé lorsqu'un pion avance de 2, et immédiatement désactivé le coup suivant
  
 class Cavalier():
 
