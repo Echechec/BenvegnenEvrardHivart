@@ -299,6 +299,10 @@ if Tirage==H:
 else:
     print(J2, "joue les blancs")
     
+## Remarques générale
+# La situation pathologique où le roque serait un coup possible évitant le pat ET où la tour là où elle arrive après roque protège le roi d'un échec n'est pas un cas possible
+# car il supposerait que le roi soit en échec avant le roque (puisque la tour protège horizontalement), ce qui est absurde. Ceci évite un problème avec la méthode pat.
+    
     
 ## Roque, c'est rock'n roll croyez-moi
 # Cas de la tour --> On ne sait pas si on garde le cas de la tour
@@ -311,11 +315,4 @@ else:
 #            roquabilite[1] = True
 
 
-C = Cavalier(1)
-G[3][4] = C
-T = Tour(-1)
-G[2][2] = T
-F = Fou(1)
-G[0][5] = F
-D = Dame(-1)
-G[5][5] = D
+
