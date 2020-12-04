@@ -299,6 +299,44 @@ if Tirage==H:
 else:
     print(J2, "joue les blancs")
     
+    
+  ##Partie
+
+#Si joueur est pair alors les pièces blanches peuvent être sélectionnées, sinon les pièces noires
+joueur == 0
+
+if clic = sélection_dune_pièce :
+    X = abscisse_du_clic
+    Y = ordonnée_du_clic
+
+    
+#nouveau est la dernière pièce à être jouée, dans son emplacement d'arivée
+
+if clic = choix_dun_deplacement :
+    
+#réinitialisation des imprudences
+    for i in range(0,7)
+    for j in range(0,7)
+        if G[i][j].type == "Pion": G[i][j].imprudence = False
+        
+#réinitialisation de la grille
+    M = abscisse_darrivee
+    N = ordonnee_darrivee
+    G[M][N] = G[X][Y]
+    G[X][Y] = Vide()
+    nouveau = G[M][N]
+    
+#Progression des tours de jeux
+    joueur += 1
+    
+
+#allumage de l'imprudence
+    if nouveau.type = "Pion" and (X-M)**2 == 4 : nouveau.imprudence = True
+#éteignage de la virginité
+    if nouveau.type = "Tour" or nouveau.type = "Roi" : nouveau.virginite = False
+
+
+    
 ## Remarques générales
 # La situation pathologique où le roque serait un coup possible évitant le pat ET où la tour là où elle arrive après roque protège le roi d'un échec n'est pas un cas possible
 # car il supposerait que le roi soit en échec avant le roque (puisque la tour protège horizontalement), ce qui est absurde. Ceci évite un problème avec la méthode pat.
