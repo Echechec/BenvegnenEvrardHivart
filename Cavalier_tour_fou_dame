@@ -356,8 +356,8 @@ class Roi():
         for i in _Cases_absolues :
             if not i in _Cases_interdites :
                 _Cases_autorisees.append(i)
-        if self.roquabilite()[0] : _Casesautorisees.append((self.ligneInitiale,1))
-        if self.roquabilite()[1] : _Casesautorisees.append((self.ligneInitiale,5))
+        if self.roquabilite()[0] : _Cases_autorisees.append((self.ligneInitiale,1))
+        if self.roquabilite()[1] : _Cases_autorisees.append((self.ligneInitiale,5))
         return _Cases_autorisees
 
 #roquabilite renvoie [True,True] si les deux roques sont possibles (donc si le joueur a sélectionné le roi), [True,Flase] si le petit roque est possible, [False,True] si le grand roque est possible.
