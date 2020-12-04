@@ -299,7 +299,7 @@ if Tirage==H:
 else:
     print(J2, "joue les blancs")
     
-## Remarques générale
+## Remarques générales
 # La situation pathologique où le roque serait un coup possible évitant le pat ET où la tour là où elle arrive après roque protège le roi d'un échec n'est pas un cas possible
 # car il supposerait que le roi soit en échec avant le roque (puisque la tour protège horizontalement), ce qui est absurde. Ceci évite un problème avec la méthode pat.
     
