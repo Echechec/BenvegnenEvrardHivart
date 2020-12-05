@@ -469,14 +469,25 @@ if clic = choix_dun_deplacement :
     G[X][Y] = Vide()
     nouveau = G[M][N]
     
-#Progression des tours de jeux
-    joueur += 1
-    
-
 #allumage de l'imprudence
     if nouveau.type = "Pion" and (X-M)**2 == 4 : nouveau.imprudence = True
 #éteignage de la virginité
     if nouveau.type = "Tour" or nouveau.type = "Roi" : nouveau.virginite = False
+    
+#effet du roque
+    couleur = 1**(joueur%2)
+    if G[M][N].type == "Roi" and (Y-N)**2 == 4:
+        if Y == 1:
+            G[G[M][N].ligneInitiale][2] = G[G[M][N].ligneInitiale][0]
+            G[G[M][N].ligneInitiale][0] = Vide()
+        if Y == 5:
+            G[G[M][N].ligneInitiale][4] = G[G[M][N].ligneInitiale][7]
+            G[G[M][N].ligneInitiale][7] = Vide()
+            
+#Progression des tours de jeux
+    joueur += 1
+    
+
 
 
     
