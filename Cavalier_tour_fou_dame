@@ -15,7 +15,7 @@ class Vide():
 class Pion():
     def __init__(self,couleur):
         self.couleur = couleur
-        self.ligneInitiale = (-3.5*couleur + 3.5)
+        self.ligneInitiale = int(-3.5*couleur + 3.5)
         self.type = "Pion"
         self.imprudence = False
         
@@ -74,7 +74,7 @@ class Cavalier():
 
     def __init__(self,couleur):
         self.couleur = couleur
-        self.ligneInitiale = (-3.5*couleur + 3.5)
+        self.ligneInitiale = int(-3.5*couleur + 3.5)
         self.type = "Cavalier"
 
 
@@ -115,7 +115,7 @@ class Cavalier():
 class Tour():
     def __init__(self,couleur):
         self.couleur=couleur
-        self.ligneInitiale = (-3.5*couleur + 3.5)
+        self.ligneInitiale = int(-3.5*couleur + 3.5)
         self.type = "Tour"
         self.virginite = True
 
@@ -173,7 +173,7 @@ class Tour():
 class Fou():
     def __init__(self,couleur):
         self.couleur = couleur
-        self.ligneInitiale = (-3.5*couleur + 3.5)
+        self.ligneInitiale = int(-3.5*couleur + 3.5)
         self.type = "Fou"
 
     def possibilitesAbsolues(self,a,b):
@@ -232,7 +232,7 @@ class Dame():
 
     def __init__(self,couleur):
         self.couleur = couleur
-        self.ligneInitiale = (-3.5*couleur + 3.5)
+        self.ligneInitiale = int(-3.5*couleur + 3.5)
         self.type = "Dame"
 
     def possibilitesAbsolues(self,a,b):
@@ -313,7 +313,7 @@ class Dame():
 class Roi():
     def __init__(self,couleur):
         self.couleur = couleur
-        self.ligneInitiale = (-3.5*couleur + 3.5)
+        self.ligneInitiale = int(-3.5*couleur + 3.5)
         self.type = "Roi"
         self.virginite = True
 
