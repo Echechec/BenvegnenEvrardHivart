@@ -379,6 +379,17 @@ def vulnerabilite(a,b,couleur):
 #(Ab,Bb) position du roi blanc
 #(An,Bn) position du roi noir
 #(X,Y) case sur laquelle l'utilisateur clique au début de son tour
+
+def echec_et_mat(couleur):
+    echapee = []
+    for c in range(8):
+        for d in range(8):
+            if G[c][d].couleur == couleur :
+                echapee.append(G[c][d].possibilites())
+    if echapee == []:
+        return True
+    else :
+        return False
             
 ## Programme principal
 
