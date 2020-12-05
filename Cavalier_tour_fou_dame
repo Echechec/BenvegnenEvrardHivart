@@ -334,9 +334,9 @@ class Roi():
         petitRoque = not(vulnerabilite(L,0,-cou) or vulnerabilite(L,1,-cou) or vulnerabilite(L,2,-cou) or vulnerabilite(L,3,-cou)) 
         grandRoque = not(vulnerabilite(L,3,-cou) or vulnerabilite(L,4,-cou) or vulnerabilite(L,5,-cou) or vulnerabilite(L,6,-cou) or vulnerabilite(L,7,-cou))
         if self.virginite:
-            if  G[L][1] == "Vide" and G[L][2] == "Vide" and petitRoque and G[L][0].type == "Tour" and G[L][0].virginite :
+            if  G[L][1].type == "Vide" and G[L][2].type == "Vide" and petitRoque and G[L][0].type == "Tour" and G[L][0].virginite :
                 r[0] = True
-            if G[L][4] == "Vide" and G[L][5] == "Vide" and G[L][6] == "Vide" and grandRoque and G[L][7].type == "Tour" and G[L][7].virginite:
+            if G[L][4].type == "Vide" and G[L][5].type == "Vide" and G[L][6].type == "Vide" and grandRoque and G[L][7].type == "Tour" and G[L][7].virginite:
                 r[1] = True
         return(r)
 
@@ -356,8 +356,10 @@ class Roi():
         for i in _Cases_absolues :
             if not i in _Cases_interdites :
                 _Cases_autorisees.append(i)
-        if self.roquabilite()[0] : _Cases_autorisees.append((self.ligneInitiale,1))
-        if self.roquabilite()[1] : _Cases_autorisees.append((self.ligneInitiale,5))
+        if self.roquabilite()[0] :
+            _Cases_autorisees.append((self.ligneInitiale,1))
+        if self.roquabilite()[1] :
+            _Cases_autorisees.append((self.ligneInitiale,5))
         return _Cases_autorisees
 
 #roquabilite renvoie [True,True] si les deux roques sont possibles (donc si le joueur a sélectionné le roi), [True,Flase] si le petit roque est possible, [False,True] si le grand roque est possible.
