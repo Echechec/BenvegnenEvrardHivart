@@ -445,8 +445,8 @@ else:
     
   ##Partie
 
-#Si joueur est pair alors les pièces blanches peuvent être sélectionnées, sinon les pièces noires
-joueur == 0
+#Si joueur est pair alors les pièces blanches peuvent être sélectionnées, sinon les pièces noires --> couleur = 1**(joueur%2)
+joueur == 0 
 
 if clic = sélection_dune_pièce :
     X = abscisse_du_clic
@@ -475,7 +475,6 @@ if clic = choix_dun_deplacement :
     if nouveau.type = "Tour" or nouveau.type = "Roi" : nouveau.virginite = False
     
 #effet du roque
-    couleur = 1**(joueur%2)
     if G[M][N].type == "Roi" and (Y-N)**2 == 4:
         if Y == 1:
             G[G[M][N].ligneInitiale][2] = G[G[M][N].ligneInitiale][0]
@@ -484,6 +483,10 @@ if clic = choix_dun_deplacement :
             G[G[M][N].ligneInitiale][4] = G[G[M][N].ligneInitiale][7]
             G[G[M][N].ligneInitiale][7] = Vide()
             
+#effet de la prise en passant
+    if G[M][N].type == "Pion" and (X-M)**2+(Y-N)**2 == 2 and CopiePriseEnPassant.type == "Vide":
+        G[X][N] = "Vide"
+        
 #Progression des tours de jeux
     joueur += 1
     
