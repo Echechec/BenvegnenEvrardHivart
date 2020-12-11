@@ -384,7 +384,7 @@ def echec_et_mat(couleur):
     for c in range(8):
         for d in range(8):
             if G[c][d].couleur == couleur :
-                for i in G[c][d].possibilites(c,d)
+                for i in G[c][d].possibilites(c,d):
                     echapee.append(i)
     if echapee == []:
         return True
