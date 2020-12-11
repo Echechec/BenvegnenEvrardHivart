@@ -427,8 +427,8 @@ for k in range (8):
     G[1][k]= Pion(1)
     G[6][k]= Pion(-1)
 
-for i in range (8):
-    for j in range(2, 6):
+for i in range (2, 6):
+    for j in range(8):
         G[i][j]=Vide()
 
 J1=input("Joueur 1:")
