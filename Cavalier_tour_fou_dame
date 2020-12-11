@@ -495,16 +495,19 @@ if clic = choix_dun_deplacement :
     joueur += 1
 
 #PAT
-    coul = 1**(joueur%2)
+    coul = -1
     ok = []
     a = 0
     while ok == [] and a < 8 :
         b = 0
         while ok == [] and b < 8:
-            if G[a][b].type != "Vide" and G[a][b].couleur == coul:
-                for i in G[a][b].possibilites:
+            if G[a][b].couleur == coul:
+                for i in G[a][b].possibilites(a,b):
                     ok += [i]
-    a += 1
+            b += 1
+        a += 1
+    if ok == []: pat = True
+    else : pat = False
     
 
     
