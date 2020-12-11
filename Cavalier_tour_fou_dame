@@ -46,7 +46,7 @@ class Pion():
         return __Cases
         
    
-   def possibilites(self,a,b):
+    def possibilites(self,a,b):
         _Cases_absolues = self.possibilitesAbsolues(a,b)
         _Cases_interdites = []
         for i in _Cases_absolues:
@@ -340,7 +340,7 @@ class Roi():
                 r[1] = True
         return(r)
 
-     def possibilites(self,a,b):
+    def possibilites(self,a,b):
         _Cases_absolues = self.possibilitesAbsolues(a,b)
         _Cases_interdites = []
         for i in _Cases_absolues:
