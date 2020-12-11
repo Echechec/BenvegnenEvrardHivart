@@ -491,9 +491,19 @@ if clic = choix_dun_deplacement :
         
 #Progression des tours de jeux
     joueur += 1
+
+#PAT
+    coul = 1**(joueur%2)
+    ok = []
+    a = 0
+    while ok == [] and a < 8 :
+        b = 0
+        while ok == [] and b < 8:
+            if G[a][b].type != "Vide" and G[a][b].couleur == coul:
+                for i in G[a][b].possibilites:
+                    ok += [i]
+    a += 1
     
-
-
 
     
 ## Remarques générales
