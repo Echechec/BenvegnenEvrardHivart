@@ -38,9 +38,9 @@ class Pion():
                     
             #Prise en passant
             if a == self.ligneInitiale + self.couleur*4 :
-                if G[a][b+1].type == "Pion" and G[a][b+1].couleur == -self.couleur and G[a][b+1].imprudence and G[a+self.couleur][b+1] == "Vide":
+                if G[a][b+1].type == "Pion" and G[a][b+1].couleur == -self.couleur and G[a][b+1].imprudence and G[a+self.couleur][b+1].type == "Vide":
                     __Cases.append((a+self.couleur,b+1))
-                if G[a][b-1].type == "Pion" and G[a][b-1].couleur == -self.couleur and G[a][b-1].imprudence and G[a+self.couleur][b-1] == "Vide":
+                if G[a][b-1].type == "Pion" and G[a][b-1].couleur == -self.couleur and G[a][b-1].imprudence and G[a+self.couleur][b-1].type == "Vide":
                     __Cases.append((a+self.couleur,b-1))
 
         return __Cases
@@ -84,10 +84,9 @@ class Cavalier():
             for d in range(b-2,b+3):
                 i = a-c
                 j = b-d
-                print(c,d)
                 if i**2+j**2 == 5 and c < 8 and c > -1 and d < 8 and d > -1 and G[c][d].couleur != self.couleur :
                         __Cases += [(c,d)]
-        print(__Cases)
+        return(__Cases)
         
     def possibilites(self,a,b):
         _Cases_absolues = self.possibilitesAbsolues(a,b)
@@ -385,7 +384,8 @@ def echec_et_mat(couleur):
     for c in range(8):
         for d in range(8):
             if G[c][d].couleur == couleur :
-                echapee.append(G[c][d].possibilites())
+                for i in G[c][d].possibilites(c,d)
+                    echapee.append(i)
     if echapee == []:
         return True
     else :
@@ -488,6 +488,8 @@ if clic = choix_dun_deplacement :
 #effet de la prise en passant
     if G[M][N].type == "Pion" and (X-M)**2+(Y-N)**2 == 2 and CopiePriseEnPassant.type == "Vide":
         G[X][N] = "Vide"
+        
+#pion en bout de ligne : changement de pièce
         
 #Progression des tours de jeux
     joueur += 1
