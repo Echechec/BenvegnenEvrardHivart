@@ -611,11 +611,11 @@ def main():
 
                     #effet du roque
                     if G[M][N].type == "Roi" and (Y-N)**2 == 4:
-                        if Y == 1:
+                        if N == 1:
                             G[G[M][N].ligneInitiale][2] = G[G[M][N].ligneInitiale][0]
                             G[G[M][N].ligneInitiale][0] = Vide()
                             A.MakeMove(Deplacement((G[G[M][N].ligneInitiale],0), (G[M][N].ligneInitiale,2), Plateau))
-                        if Y == 5:
+                        if N == 5:
                             G[G[M][N].ligneInitiale][4] = G[G[M][N].ligneInitiale][7]
                             G[G[M][N].ligneInitiale][7] = Vide()
                             A.MakeMove(Deplacement((G[G[M][N].ligneInitiale],7), (G[M][N].ligneInitiale,4), Plateau))
