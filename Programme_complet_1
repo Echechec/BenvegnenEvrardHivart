@@ -484,14 +484,14 @@ import pygame
 class GameState():
     def __init__(self):
         self.board=[
-            ["Tb", "Cb", "Fb", "Db", "Rb", "Fb", "Cb", "Tb"],
+            ["Tb", "Cb", "Fb", "Rb", "Db", "Fb", "Cb", "Tb"],
             ["pb", "pb", "pb", "pb", "pb", "pb", "pb", "pb"],
             ["_", "_", "_", "_", "_", "_", "_", "_"],
             ["_", "_", "_", "_", "_", "_", "_", "_"],
             ["_", "_", "_", "_", "_", "_", "_", "_"],
             ["_", "_", "_", "_", "_", "_", "_", "_"],
             ["pn", "pn", "pn", "pn", "pn", "pn", "pn", "pn"],
-            ["Tn", "Cn", "Fn", "Dn", "Rn", "Fn", "Cn", "Tn"]
+            ["Tn", "Cn", "Fn", "Rn", "Dn", "Fn", "Cn", "Tn"]
         ]
         self.whiteToMove = True
         self.moveLog=[]
