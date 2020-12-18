@@ -627,13 +627,12 @@ def main():
                     joueur += 1
                 
                     #PAT
-                    coul = -1
                     ok = []
                     a = 0
                     while ok == [] and a < 8 :
                         b = 0
                         while ok == [] and b < 8:
-                            if G[a][b].couleur == coul:
+                            if G[a][b].couleur == (-1)*coul:
                                 for i in G[a][b].possibilites(a,b):
                                     ok += [i]
                             b += 1
