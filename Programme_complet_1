@@ -404,6 +404,7 @@ def vulnerabilite(a,b,couleur):
 
     for c in range(8):
         for d in range(8):
+            print(G[c][d])
             if G[c][d].couleur == couleur:
                 if (a,b) in G[c][d].possibilitesAbsolues(c,d):
                     return True
@@ -425,57 +426,56 @@ if False :
 
 #def choix(M,N):
 
-#réinitialisation des imprudences
+def mouvement(G,X,Y,N,M,Plateau,joueur,coul,A):
     for i in range(0,7):
         for j in range(0,7):
             if G[i][j].type == "Pion": G[i][j].imprudence = False
 
-#réinitialisation de la grille
-    M = abscisse_darrivee
-    N = ordonnee_darrivee
+                    #réinitialisation de la grille
     G[M][N] = G[X][Y]
     G[X][Y] = Vide()
     nouveau = G[M][N]
 
-#allumage de l'imprudence
+                    #allumage de l'imprudence
     if nouveau.type == "Pion" and (X-M)**2 == 4 : nouveau.imprudence = True
-#éteignage de la virginité
+                    #éteignage de la virginité
     if nouveau.type == "Tour" or nouveau.type == "Roi" : nouveau.virginite = False
 
-#effet du roque
+                    #effet du roque
     if G[M][N].type == "Roi" and (Y-N)**2 == 4:
-        if Y == 1:
+        if N == 1:
             G[G[M][N].ligneInitiale][2] = G[G[M][N].ligneInitiale][0]
             G[G[M][N].ligneInitiale][0] = Vide()
-        if Y == 5:
+            A.MakeMove(Deplacement((G[M][N].ligneInitiale,0), (G[M][N].ligneInitiale,2), Plateau))
+
+        if N == 5:
             G[G[M][N].ligneInitiale][4] = G[G[M][N].ligneInitiale][7]
             G[G[M][N].ligneInitiale][7] = Vide()
+            A.MakeMove(Deplacement((G[M][N].ligneInitiale,7), (G[M][N].ligneInitiale,4), Plateau))
 
-#effet de la prise en passant
-    if G[M][N].type == "Pion" and (X-M)**2+(Y-N)**2 == 2 and CopiePriseEnPassant.type == "Vide":
+                    #effet de la prise en passant
+    if G[M][N].type == "Pion" and (X-M)**2+(Y-N)**2 == 2: #and CopiePriseEnPassant.type == "Vide":
         G[X][N] = "Vide"
+                    #pion en bout de ligne : changement de pièce
 
-#pion en bout de ligne : changement de pièce
+                    #Progression des tours de jeux
+# Mystérieusement on doit le faire hors de la fonction sinon ça ne fonctionne pas ???? joueur += 1
 
-#Progression des tours de jeux
-    joueur += 1
-
-#PAT
-    coul = -1
+                    #PAT
     ok = []
     a = 0
     while ok == [] and a < 8 :
         b = 0
         while ok == [] and b < 8:
-            if G[a][b].couleur == coul:
+            if G[a][b].couleur == (-1)*coul:
                 for i in G[a][b].possibilites(a,b):
+                    print(G[a][b].possibilites(a,b))
                     ok += [i]
             b += 1
         a += 1
     if ok == []: pat = True
     else : pat = False
-
-
+    return(G,Plateau,pat,joueur)
 
 ## Interface
 
@@ -523,12 +523,12 @@ def LoadImage():
     for piece in pieces:
         image[piece] = pygame.transform.scale(pygame.image.load("C:/Users/Jerome/Documents/Images/"+ piece + ".png"), ((Taille_Carre), (Taille_Carre)))
 
-def drawGameState(screen, G):
+def drawGameState(screen, Plateau):
     drawBoard(screen)
-    drawPiece(screen, G)
+    drawPiece(screen, Plateau)
 
 def drawBoard(srceen):
-    colors = [pygame.Color(1, 61, 26), pygame.Color(187, 118, 63)]
+    colors = [pygame.Color(200, 220, 200), pygame.Color(187, 118, 63)]
     for i in range(Dimension):
         for j in range(Dimension):
             color = colors[((i+j)%2)]
@@ -561,87 +561,49 @@ def main():
 
     running = True
     joueur = 0
-    Essai = False
     Cliques = []
-    action = 0
-    
+    test = []
+    action = False
+
     while running:
-        
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-               running = False
-               #fermer la fenêtre ?
-        
+                print()
+                running = False
+                pygame.quit()
+                #fermer la fenêtre ?
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                action += 1
+
                 coul = (-1)**(joueur%2)
                 location = pygame.mouse.get_pos()
                 Ligne = location[1]//Taille_Carre
                 Colonne = location[0]//Taille_Carre
-                if G[Ligne][Colonne].couleur == coul:
-                    Essai = True
+                Cliques += [(Ligne,Colonne)]
+                if G[Ligne][Colonne].couleur == coul and not action:
                     X = Ligne
                     Y = Colonne
-                    Pos = G[X][Y].possibilites(X,Y)
-                    Cliques += [(X,Y)]
-                if Essai and (Ligne,Colonne) in Pos and action%2 == 0:
-                    Choix = (Ligne, Colonne)
-                    Cliques.append(Choix)
+                    Potentiel = G[X][Y].possibilites(X,Y)
+                    action = True
+                    
+                if G[Ligne][Colonne].couleur != coul and not action:
+                    Cliques = []
+
+                if action and not (Ligne,Colonne) in Potentiel and len(Cliques) == 2:
+                    action = False
+                    Cliques = []
+
+                if action and (Ligne,Colonne) in Potentiel and len(Cliques) == 2:
+
                     deplacement = Deplacement(Cliques[0], Cliques[1], Plateau)
                     A.MakeMove(deplacement)
-                    Case_Selectionnee = ()
                     Cliques = []
-                    
-                    Essai = False
+                    action = False
                     M = Ligne
                     N = Colonne
-                    for i in range(0,7):
-                        for j in range(0,7):
-                            if G[i][j].type == "Pion": G[i][j].imprudence = False
-
-                    #réinitialisation de la grille
-                    G[M][N] = G[X][Y]
-                    G[X][Y] = Vide()
-                    nouveau = G[M][N]
-
-                    #allumage de l'imprudence
-                    if nouveau.type == "Pion" and (X-M)**2 == 4 : nouveau.imprudence = True
-                    #éteignage de la virginité
-                    if nouveau.type == "Tour" or nouveau.type == "Roi" : nouveau.virginite = False
-
-                    #effet du roque
-                    if G[M][N].type == "Roi" and (Y-N)**2 == 4:
-                        if N == 1:
-                            G[G[M][N].ligneInitiale][2] = G[G[M][N].ligneInitiale][0]
-                            G[G[M][N].ligneInitiale][0] = Vide()
-                            A.MakeMove(Deplacement((G[M][N].ligneInitiale,0), (G[M][N].ligneInitiale,2), Plateau))
-                        if N == 5:
-                            G[G[M][N].ligneInitiale][4] = G[G[M][N].ligneInitiale][7]
-                            G[G[M][N].ligneInitiale][7] = Vide()
-                            A.MakeMove(Deplacement((G[M][N].ligneInitiale,7), (G[M][N].ligneInitiale,4), Plateau))
-
-                    #effet de la prise en passant
-                    if G[M][N].type == "Pion" and (X-M)**2+(Y-N)**2 == 2: #and CopiePriseEnPassant.type == "Vide":
-                        G[X][N] = "Vide"
-                    #pion en bout de ligne : changement de pièce
-                
-                    #Progression des tours de jeux
+                    mouvement(G,X,Y,N,M,Plateau,joueur,coul,A)
                     joueur += 1
-                
-                    #PAT
-                    ok = []
-                    a = 0
-                    while ok == [] and a < 8 :
-                        b = 0
-                        while ok == [] and b < 8:
-                            if G[a][b].couleur == (-1)*coul:
-                                for i in G[a][b].possibilites(a,b):
-                                    ok += [i]
-                            b += 1
-                        a += 1
-                    if ok == []: pat = True
-                    else : pat = False
-
         drawGameState(screen, Plateau)
         pygame.display.flip()
 
@@ -649,3 +611,13 @@ def main():
 
 
 main()
+
+                    # for l in L:
+                    #     i = l[0]
+                    #     j = l[1]
+                    #     color = pygame.Color(50, 50, 50)
+                    #     surface = pygame.Surface((i//Taille_Carre,j//Taille_Carre))
+                    #     pygame.draw.rect(surface, color, pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre ))
+                    # drawGameState(screen, Plateau)
+                    # pygame.display.flip()
+
