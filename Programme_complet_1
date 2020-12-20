@@ -1,3 +1,15 @@
+# classes = open("C:/Users/Jerome/fichierclasses.py","r")
+# contenu1 = classes.read()
+# grille = open("C:/Users/Jerome/fichierGrille.py","r")
+# contenu2 = grille.read()
+# fonctionCorps = open("C:/Users/Jerome/fichierfonctionsCorps.py","w")
+# contenu3 = fonctionCorps.read()
+# L = contenu3
+# # classes.close()
+# # grille.close()
+# # fonctionCorps.close()
+
+
 ## Classes
 class Vide():
 
@@ -404,7 +416,6 @@ def vulnerabilite(a,b,couleur):
 
     for c in range(8):
         for d in range(8):
-            print(G[c][d])
             if G[c][d].couleur == couleur:
                 if (a,b) in G[c][d].possibilitesAbsolues(c,d):
                     return True
@@ -427,11 +438,13 @@ if False :
 #def choix(M,N):
 
 def mouvement(G,X,Y,N,M,Plateau,joueur,coul,A):
+
     for i in range(0,7):
         for j in range(0,7):
             if G[i][j].type == "Pion": G[i][j].imprudence = False
 
                     #réinitialisation de la grille
+    CopiePriseEnPassant = G[M][N]
     G[M][N] = G[X][Y]
     G[X][Y] = Vide()
     nouveau = G[M][N]
@@ -454,8 +467,9 @@ def mouvement(G,X,Y,N,M,Plateau,joueur,coul,A):
             A.MakeMove(Deplacement((G[M][N].ligneInitiale,7), (G[M][N].ligneInitiale,4), Plateau))
 
                     #effet de la prise en passant
-    if G[M][N].type == "Pion" and (X-M)**2+(Y-N)**2 == 2: #and CopiePriseEnPassant.type == "Vide":
-        G[X][N] = "Vide"
+    if G[M][N].type == "Pion" and (X-M)**2+(Y-N)**2 == 2 and CopiePriseEnPassant.type == "Vide":
+        G[X][N] = Vide()
+        Plateau[X][N] = "_"
                     #pion en bout de ligne : changement de pièce
 
                     #Progression des tours de jeux
@@ -469,7 +483,6 @@ def mouvement(G,X,Y,N,M,Plateau,joueur,coul,A):
         while ok == [] and b < 8:
             if G[a][b].couleur == (-1)*coul:
                 for i in G[a][b].possibilites(a,b):
-                    print(G[a][b].possibilites(a,b))
                     ok += [i]
             b += 1
         a += 1
@@ -528,7 +541,7 @@ def drawGameState(screen, Plateau):
     drawPiece(screen, Plateau)
 
 def drawBoard(srceen):
-    colors = [pygame.Color(200, 220, 200), pygame.Color(187, 118, 63)]
+    colors = [pygame.Color(100, 153, 240), pygame.Color(187, 118, 63)]
     for i in range(Dimension):
         for j in range(Dimension):
             color = colors[((i+j)%2)]
@@ -586,7 +599,7 @@ def main():
                     Y = Colonne
                     Potentiel = G[X][Y].possibilites(X,Y)
                     action = True
-                    
+
                 if G[Ligne][Colonne].couleur != coul and not action:
                     Cliques = []
 
@@ -609,15 +622,6 @@ def main():
 
 
 
-
 main()
 
-                    # for l in L:
-                    #     i = l[0]
-                    #     j = l[1]
-                    #     color = pygame.Color(50, 50, 50)
-                    #     surface = pygame.Surface((i//Taille_Carre,j//Taille_Carre))
-                    #     pygame.draw.rect(surface, color, pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre ))
-                    # drawGameState(screen, Plateau)
-                    # pygame.display.flip()
 
