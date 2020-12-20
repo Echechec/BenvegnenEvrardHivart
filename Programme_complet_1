@@ -1,3 +1,15 @@
+# classes = open("C:/Users/Jerome/fichierclasses.py","r")
+# contenu1 = classes.read()
+# grille = open("C:/Users/Jerome/fichierGrille.py","r")
+# contenu2 = grille.read()
+# fonctionCorps = open("C:/Users/Jerome/fichierfonctionsCorps.py","w")
+# contenu3 = fonctionCorps.read()
+# L = contenu3
+# # classes.close()
+# # grille.close()
+# # fonctionCorps.close()
+
+
 ## Classes
 class Vide():
 
@@ -526,19 +538,29 @@ def LoadImage():
     for piece in pieces:
         image[piece] = pygame.transform.scale(pygame.image.load("C:/Users/Jerome/Documents/Images/"+ piece + ".png"), ((Taille_Carre), (Taille_Carre)))
 
-def drawGameState(screen, Plateau):
-    drawBoard(screen)
+def drawGameState(screen, Plateau, action, Potentiel):
+    drawBoard(screen, Plateau, action, Potentiel)
     drawPiece(screen, Plateau)
 
-def drawBoard(srceen):
+
+def drawPotentiel(screen, Plateau, Potentiel):
+    for i in Potentiel:
+        x = i[0]
+        y = i[1]
+        pygame.draw.circle(screen,(0,200,0),(y*Taille_Carre + 32, x*Taille_Carre + 32),30, 4)
+
+
+def drawBoard(screen, Plateau, action, Potentiel):
     colors = [pygame.Color(240, 240, 240), pygame.Color(187, 118, 63)]
     for i in range(Dimension):
         for j in range(Dimension):
             color = colors[((i+j)%2)]
-            pygame.draw.rect(srceen, color, pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre ))
+            pygame.draw.rect(screen, color, pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre ))
     for i in range(8):
         for j in [8,9,10,11]:
-            pygame.draw.rect(srceen, (180,180,220), pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre ))
+            pygame.draw.rect(screen, (180,180,220), pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre ))
+    if action:
+        drawPotentiel(screen, Plateau, Potentiel)
 
 def drawPiece(screen, board):
     for i in range(Dimension):
@@ -572,6 +594,8 @@ def main():
     action = False
     info = False
     piecesPerdues = 0
+    Potentiel = []
+
     while running:
 
         for event in pygame.event.get():
@@ -593,6 +617,7 @@ def main():
                     Y = Colonne
                     Potentiel = G[X][Y].possibilites(X,Y)
                     action = True
+                    drawGameState(screen, Plateau, action, Potentiel)
 
                 if G[Ligne][Colonne].couleur != coul and not action:
                     Cliques = []
@@ -621,7 +646,7 @@ def main():
                     joueur += 1
 
 
-        drawGameState(screen, Plateau)
+        drawGameState(screen, Plateau, action, Potentiel)
         pygame.display.flip()
 
 
@@ -629,3 +654,4 @@ def main():
 
 main()
 
+                    
