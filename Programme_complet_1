@@ -1,15 +1,3 @@
-# classes = open("C:/Users/Jerome/fichierclasses.py","r")
-# contenu1 = classes.read()
-# grille = open("C:/Users/Jerome/fichierGrille.py","r")
-# contenu2 = grille.read()
-# fonctionCorps = open("C:/Users/Jerome/fichierfonctionsCorps.py","w")
-# contenu3 = fonctionCorps.read()
-# L = contenu3
-# # classes.close()
-# # grille.close()
-# # fonctionCorps.close()
-
-
 ## Classes
 class Vide():
 
@@ -483,6 +471,7 @@ def mouvement(G,X,Y,N,M,Plateau,joueur,coul,A):
         while ok == [] and b < 8:
             if G[a][b].couleur == (-1)*coul:
                 for i in G[a][b].possibilites(a,b):
+                    print(G[a][b].possibilites(a,b))
                     ok += [i]
             b += 1
         a += 1
@@ -497,14 +486,14 @@ import pygame
 class GameState():
     def __init__(self):
         self.board=[
-            ["Tb", "Cb", "Fb", "Rb", "Db", "Fb", "Cb", "Tb"],
-            ["pb", "pb", "pb", "pb", "pb", "pb", "pb", "pb"],
-            ["_", "_", "_", "_", "_", "_", "_", "_"],
-            ["_", "_", "_", "_", "_", "_", "_", "_"],
-            ["_", "_", "_", "_", "_", "_", "_", "_"],
-            ["_", "_", "_", "_", "_", "_", "_", "_"],
-            ["pn", "pn", "pn", "pn", "pn", "pn", "pn", "pn"],
-            ["Tn", "Cn", "Fn", "Rn", "Dn", "Fn", "Cn", "Tn"]
+            ["Tb", "Cb", "Fb", "Rb", "Db", "Fb", "Cb", "Tb","bord","bord","bord","bord"],
+            ["pb", "pb", "pb", "pb", "pb", "pb", "pb", "pb","bord","bord","bord","bord"],
+            ["_", "_", "_", "_", "_", "_", "_", "_","bord","bord","bord","bord"],
+            ["_", "_", "_", "_", "_", "_", "_", "_","bord","bord","bord","bord"],
+            ["_", "_", "_", "_", "_", "_", "_", "_","bord","bord","bord","bord"],
+            ["_", "_", "_", "_", "_", "_", "_", "_","bord","bord","bord","bord"],
+            ["pn", "pn", "pn", "pn", "pn", "pn", "pn", "pn","bord","bord","bord","bord"],
+            ["Tn", "Cn", "Fn", "Rn", "Dn", "Fn", "Cn", "Tn","bord","bord","bord","bord"]
         ]
         self.whiteToMove = True
         self.moveLog=[]
@@ -526,9 +515,10 @@ class Deplacement():
         self.piece_capturee = board[self.arrivee_ligne][self.arrivee_colonne]
 
 
-Longueur = Largeur = 512
+Longueur = int(3*512/2)
+Largeur = 512
 Dimension = 8
-Taille_Carre = Longueur // Dimension
+Taille_Carre = Largeur // Dimension
 image = {}
 
 def LoadImage():
@@ -541,22 +531,25 @@ def drawGameState(screen, Plateau):
     drawPiece(screen, Plateau)
 
 def drawBoard(srceen):
-    colors = [pygame.Color(100, 153, 240), pygame.Color(187, 118, 63)]
+    colors = [pygame.Color(240, 240, 240), pygame.Color(187, 118, 63)]
     for i in range(Dimension):
         for j in range(Dimension):
             color = colors[((i+j)%2)]
             pygame.draw.rect(srceen, color, pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre ))
+    for i in range(8):
+        for j in [8,9,10,11]:
+            pygame.draw.rect(srceen, (180,180,220), pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre ))
 
 def drawPiece(screen, board):
     for i in range(Dimension):
-        for j in range(Dimension):
+        for j in range(Dimension+4):
             piece = board[i][j]
-            if piece != "_":
+            if piece != "_" and piece != "bord":
                 screen.blit(image[piece], pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre ))
 
 
 ## Programme principal
-
+import copy
 
 def main():
 
@@ -577,15 +570,16 @@ def main():
     Cliques = []
     test = []
     action = False
-
+    info = False
+    piecesPerdues = 0
     while running:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 print()
                 running = False
+                print(test)
                 pygame.quit()
-                #fermer la fenêtre ?
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
 
@@ -608,6 +602,14 @@ def main():
                     Cliques = []
 
                 if action and (Ligne,Colonne) in Potentiel and len(Cliques) == 2:
+                    if Plateau[Ligne][Colonne] != "_":
+                        info = True
+                        Copie = copy.copy(Cliques[1])
+                    if info:
+                        piecesPerdues += 1
+                        info = False
+                        deplacement = Deplacement(Copie, ((piecesPerdues-1)%8,11-((piecesPerdues-1)//8)), Plateau)
+                        A.MakeMove(deplacement)
 
                     deplacement = Deplacement(Cliques[0], Cliques[1], Plateau)
                     A.MakeMove(deplacement)
@@ -617,11 +619,13 @@ def main():
                     N = Colonne
                     mouvement(G,X,Y,N,M,Plateau,joueur,coul,A)
                     joueur += 1
+
+
         drawGameState(screen, Plateau)
         pygame.display.flip()
 
 
 
-main()
 
+main()
 
