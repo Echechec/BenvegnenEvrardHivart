@@ -1,15 +1,3 @@
-# classes = open("C:/Users/Jerome/fichierclasses.py","r")
-# contenu1 = classes.read()
-# grille = open("C:/Users/Jerome/fichierGrille.py","r")
-# contenu2 = grille.read()
-# fonctionCorps = open("C:/Users/Jerome/fichierfonctionsCorps.py","w")
-# contenu3 = fonctionCorps.read()
-# L = contenu3
-# # classes.close()
-# # grille.close()
-# # fonctionCorps.close()
-
-
 ## Classes
 class Vide():
 
@@ -53,7 +41,7 @@ class Pion():
         return __Cases
 
 
-    def possibilites(self,a,b):
+    def possibilites(self,a,b,Royal):
         _Cases_absolues = self.possibilitesAbsolues(a,b)
         _Cases_interdites = []
         for i in _Cases_absolues:
@@ -62,10 +50,10 @@ class Pion():
             G[c][d] = G[a][b]
             G[a][b] = Vide()
             if self.couleur == 1:
-                if vulnerabilite(Ab,Bb,-1):
+                if vulnerabilite(Royal[0],Royal[1],-1):
                     _Cases_interdites.append(i)
             if self.couleur == -1:
-                if vulnerabilite(An,Bn,1):
+                if vulnerabilite(Royal[2],Royal[3],1):
                     _Cases_interdites.append(i)
             G[a][b] = G[c][d]
             G[c][d] = memo
@@ -95,7 +83,7 @@ class Cavalier():
                         __Cases += [(c,d)]
         return(__Cases)
 
-    def possibilites(self,a,b):
+    def possibilites(self,a,b,Royal):
         _Cases_absolues = self.possibilitesAbsolues(a,b)
         _Cases_interdites = []
         for i in _Cases_absolues:
@@ -104,10 +92,10 @@ class Cavalier():
             G[c][d] = G[a][b]
             G[a][b] = Vide()
             if self.couleur == 1:
-                if vulnerabilite(Ab,Bb,-1):
+                if vulnerabilite(Royal[0],Royal[1],-1):
                     _Cases_interdites.append(i)
             if self.couleur == -1:
-                if vulnerabilite(An,Bn,1):
+                if vulnerabilite(Royal[2],Royal[3],1):
                     _Cases_interdites.append(i)
             G[a][b] = G[c][d]
             G[c][d] = memo
@@ -153,7 +141,7 @@ class Tour():
             d -= 1
         return __Cases
 
-    def possibilites(self,a,b):
+    def possibilites(self,a,b,Royal):
         _Cases_absolues = self.possibilitesAbsolues(a,b)
         _Cases_interdites = []
         for i in _Cases_absolues:
@@ -162,10 +150,10 @@ class Tour():
             G[c][d] = G[a][b]
             G[a][b] = Vide()
             if self.couleur == 1:
-                if vulnerabilite(Ab,Bb,-1):
+                if vulnerabilite(Royal[0],Royal[1],-1):
                     _Cases_interdites.append(i)
             if self.couleur == -1:
-                if vulnerabilite(An,Bn,1):
+                if vulnerabilite(Royal[2],Royal[3],1):
                     _Cases_interdites.append(i)
             G[a][b] = G[c][d]
             G[c][d] = memo
@@ -210,7 +198,7 @@ class Fou():
             l += 1
         return __Cases
 
-    def possibilites(self,a,b):
+    def possibilites(self,a,b,Royal):
         _Cases_absolues = self.possibilitesAbsolues(a,b)
         _Cases_interdites = []
         for i in _Cases_absolues:
@@ -219,10 +207,10 @@ class Fou():
             G[c][d] = G[a][b]
             G[a][b] = Vide()
             if self.couleur == 1:
-                if vulnerabilite(Ab,Bb,-1):
+                if vulnerabilite(Royal[0],Royal[1],-1):
                     _Cases_interdites.append(i)
             if self.couleur == -1:
-                if vulnerabilite(An,Bn,1):
+                if vulnerabilite(Royal[2],Royal[3],1):
                     _Cases_interdites.append(i)
             G[a][b] = G[c][d]
             G[c][d] = memo
@@ -293,7 +281,7 @@ class Dame():
             d -= 1
         return __Cases
 
-    def possibilites(self,a,b):
+    def possibilites(self,a,b,Royal):
         _Cases_absolues = self.possibilitesAbsolues(a,b)
         _Cases_interdites = []
         for i in _Cases_absolues:
@@ -302,10 +290,10 @@ class Dame():
             G[c][d] = G[a][b]
             G[a][b] = Vide()
             if self.couleur == 1:
-                if vulnerabilite(Ab,Bb,-1):
+                if vulnerabilite(Royal[0],Royal[1],-1):
                     _Cases_interdites.append(i)
             if self.couleur == -1:
-                if vulnerabilite(An,Bn,1):
+                if vulnerabilite(Royal[2],Royal[3],1):
                     _Cases_interdites.append(i)
             G[a][b] = G[c][d]
             G[c][d] = memo
@@ -346,7 +334,7 @@ class Roi():
                 r[1] = True
         return(r)
 
-    def possibilites(self,a,b):
+    def possibilites(self,a,b,Royal):
         _Cases_absolues = self.possibilitesAbsolues(a,b)
         _Cases_interdites = []
         for i in _Cases_absolues:
@@ -394,12 +382,9 @@ G[7][2]=Fou(-1)
 G[7][5]=Fou(-1)
 
 G[0][3]=Roi(1)
-(Ab,Bb)=(0,3)
 G[0][4]=Dame(1)
 G[7][3]=Roi(-1)
-(An,Bn)=(7,3)
 G[7][4]=Dame(-1)
-
 
 for k in range (8):
     G[1][k]= Pion(1)
@@ -408,6 +393,8 @@ for k in range (8):
 for i in range (2, 6):
     for j in range(8):
         G[i][j]=Vide()
+
+
 
 
 
@@ -421,8 +408,8 @@ def vulnerabilite(a,b,couleur):
                     return True
     return False
 
-#(Ab,Bb) position du roi blanc
-#(An,Bn) position du roi noir
+#(Royal[0],Royal[1]) position du roi blanc
+#(Royal[2],Royal[3]) position du roi noir
 #(X,Y) case sur laquelle l'utilisateur clique au début de son tour
 
 #Si joueur est pair alors les pièces blanches peuvent être sélectionnées, sinon les pièces noires --> couleur = 1**(joueur%2)
@@ -435,9 +422,12 @@ if False :
 
 #nouveau est la dernière pièce à être jouée, dans son emplacement d'arivée
 
-#def choix(M,N):
 
-def mouvement(G,X,Y,N,M,Plateau,joueur,coul,A):
+def mouvement(G,X,Y,N,M,Plateau,joueur,coul,A, Royal):
+
+    if G[X][Y].type == "Roi":
+        if coul == -1: Royal[2], Royal[3], Royal[0], Royal[1] = M, N, Royal[0], Royal[1]
+        else: Royal[2], Royal[3], Royal[0], Royal[1],  = Royal[2], Royal[3], M, N
 
     for i in range(0,7):
         for j in range(0,7):
@@ -482,14 +472,13 @@ def mouvement(G,X,Y,N,M,Plateau,joueur,coul,A):
         b = 0
         while ok == [] and b < 8:
             if G[a][b].couleur == (-1)*coul:
-                for i in G[a][b].possibilites(a,b):
-                    print(G[a][b].possibilites(a,b))
+                for i in G[a][b].possibilites(a,b,Royal):
                     ok += [i]
             b += 1
         a += 1
     if ok == []: pat = True
     else : pat = False
-    return(G,Plateau,pat,joueur)
+    return(G,Plateau,pat,joueur, Royal)
 
 ## Interface
 
@@ -547,7 +536,8 @@ def drawPotentiel(screen, Plateau, Potentiel):
     for i in Potentiel:
         x = i[0]
         y = i[1]
-        pygame.draw.circle(screen,(0,200,0),(y*Taille_Carre + 32, x*Taille_Carre + 32),30, 4)
+        #pygame.draw.circle(screen,(0,200,0),(y*Taille_Carre + 32, x*Taille_Carre + 32),30, 4)
+        pygame.draw.rect(screen,(0,200,0),pygame.Rect(y*Taille_Carre + 2, x*Taille_Carre + 2, Taille_Carre - 4, Taille_Carre - 4))
 
 
 def drawBoard(screen, Plateau, action, Potentiel):
@@ -558,7 +548,7 @@ def drawBoard(screen, Plateau, action, Potentiel):
             pygame.draw.rect(screen, color, pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre ))
     for i in range(8):
         for j in [8,9,10,11]:
-            pygame.draw.rect(screen, (180,180,220), pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre ))
+            pygame.draw.rect(screen, (180,180,220), pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre))
     if action:
         drawPotentiel(screen, Plateau, Potentiel)
 
@@ -587,6 +577,7 @@ def main():
     screen.fill((0, 0, 0))
     LoadImage()
 
+#Initialisation des variables
     running = True
     joueur = 0
     Cliques = []
@@ -595,6 +586,7 @@ def main():
     info = False
     piecesPerdues = 0
     Potentiel = []
+    Royal = [0, 3, 7, 3]
 
     while running:
 
@@ -615,12 +607,13 @@ def main():
                 if G[Ligne][Colonne].couleur == coul and not action:
                     X = Ligne
                     Y = Colonne
-                    Potentiel = G[X][Y].possibilites(X,Y)
+                    Potentiel = G[X][Y].possibilites(X,Y,Royal)
                     action = True
                     drawGameState(screen, Plateau, action, Potentiel)
 
                 if G[Ligne][Colonne].couleur != coul and not action:
                     Cliques = []
+
 
                 if action and not (Ligne,Colonne) in Potentiel and len(Cliques) == 2:
                     action = False
@@ -642,7 +635,8 @@ def main():
                     action = False
                     M = Ligne
                     N = Colonne
-                    mouvement(G,X,Y,N,M,Plateau,joueur,coul,A)
+                    mouvement(G,X,Y,N,M,Plateau,joueur,coul,A, Royal)
+                    print(Royal)
                     joueur += 1
 
 
@@ -653,5 +647,3 @@ def main():
 
 
 main()
-
-                    
