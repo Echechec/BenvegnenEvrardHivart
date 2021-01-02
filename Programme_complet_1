@@ -33,11 +33,10 @@ class Pion():
 
             #Prise en passant
             if a == self.ligneInitiale + self.couleur*4 :
-                if G[a][b+1].type == "Pion" and G[a][b+1].couleur == -self.couleur and G[a][b+1].imprudence and G[a+self.couleur][b+1].type == "Vide":
+                if b != 7 and G[a][b+1].type == "Pion" and G[a][b+1].couleur == -self.couleur and G[a][b+1].imprudence and G[a+self.couleur][b+1].type == "Vide":
                     __Cases.append((a+self.couleur,b+1))
-                if G[a][b-1].type == "Pion" and G[a][b-1].couleur == -self.couleur and G[a][b-1].imprudence and G[a+self.couleur][b-1].type == "Vide":
+                if b != 0 and G[a][b-1].type == "Pion" and G[a][b-1].couleur == -self.couleur and G[a][b-1].imprudence and G[a+self.couleur][b-1].type == "Vide":
                     __Cases.append((a+self.couleur,b-1))
-
         return __Cases
 
 
@@ -325,8 +324,8 @@ class Roi():
         r = [False,False]
         cou = self.couleur
         L = self.ligneInitiale
-        petitRoque = not(vulnerabilite(L,0,-cou) or vulnerabilite(L,1,-cou) or vulnerabilite(L,2,-cou) or vulnerabilite(L,3,-cou))
-        grandRoque = not(vulnerabilite(L,3,-cou) or vulnerabilite(L,4,-cou) or vulnerabilite(L,5,-cou) or vulnerabilite(L,6,-cou) or vulnerabilite(L,7,-cou))
+        petitRoque = not(vulnerabilite(L,1,-cou) or vulnerabilite(L,2,-cou) or vulnerabilite(L,3,-cou))
+        grandRoque = not(vulnerabilite(L,3,-cou) or vulnerabilite(L,4,-cou) or vulnerabilite(L,5,-cou))
         if self.virginite:
             if  G[L][1].type == "Vide" and G[L][2].type == "Vide" and petitRoque and G[L][0].type == "Tour" and G[L][0].virginite :
                 r[0] = True
@@ -423,12 +422,13 @@ if False :
 #nouveau est la dernière pièce à être jouée, dans son emplacement d'arivée
 
 
-def mouvement(G,X,Y,N,M,Plateau,joueur,coul,A, Royal):
+def mouvement(G,X,Y,N,M,Plateau,joueur,coul,A, Royal, screen, action):
 
     if G[X][Y].type == "Roi":
         if coul == -1: Royal[2], Royal[3], Royal[0], Royal[1] = M, N, Royal[0], Royal[1]
         else: Royal[2], Royal[3], Royal[0], Royal[1],  = Royal[2], Royal[3], M, N
 
+                    #éteignage imprudence
     for i in range(0,7):
         for j in range(0,7):
             if G[i][j].type == "Pion": G[i][j].imprudence = False
@@ -460,8 +460,15 @@ def mouvement(G,X,Y,N,M,Plateau,joueur,coul,A, Royal):
     if G[M][N].type == "Pion" and (X-M)**2+(Y-N)**2 == 2 and CopiePriseEnPassant.type == "Vide":
         G[X][N] = Vide()
         Plateau[X][N] = "_"
+        
                     #pion en bout de ligne : changement de pièce
-
+    if G[M][N].type == "Pion" and G[M][N].couleur == 1 and M == 7:
+        Recyclage_pion(screen, Plateau, action, 1, M, N)
+    if G[M][N].type == "Pion" and G[M][N].couleur == -1 and M == 0:
+        Recyclage_pion(screen, Plateau, action, -1, M, N)
+    
+        
+    
                     #Progression des tours de jeux
 # Mystérieusement on doit le faire hors de la fonction sinon ça ne fonctionne pas ???? joueur += 1
 
@@ -525,7 +532,7 @@ image = {}
 def LoadImage():
     pieces = ["Tn", "Tb", "Cb", "Cn", "Fn", "Fb", "pn", "pb", "Rn", "Rb", "Dn", "Db"]
     for piece in pieces:
-        image[piece] = pygame.transform.scale(pygame.image.load("C:/Users/Jerome/Documents/Images/"+ piece + ".png"), ((Taille_Carre), (Taille_Carre)))
+        image[piece] = pygame.transform.scale(pygame.image.load("C:/Users/ulysse/Documents/cpes/L2/algorithmie/"+ piece + ".png"), ((Taille_Carre), (Taille_Carre)))
 
 def drawGameState(screen, Plateau, action, Potentiel):
     drawBoard(screen, Plateau, action, Potentiel)
@@ -536,8 +543,8 @@ def drawPotentiel(screen, Plateau, Potentiel):
     for i in Potentiel:
         x = i[0]
         y = i[1]
-        #pygame.draw.circle(screen,(0,200,0),(y*Taille_Carre + 32, x*Taille_Carre + 32),30, 4)
-        pygame.draw.rect(screen,(0,200,0),pygame.Rect(y*Taille_Carre + 2, x*Taille_Carre + 2, Taille_Carre - 4, Taille_Carre - 4))
+        pygame.draw.circle(screen,(0,200,0),(y*Taille_Carre + 32, x*Taille_Carre + 32),30, 4)
+        # pygame.draw.rect(screen,(0,200,0),pygame.Rect(y*Taille_Carre + 2, x*Taille_Carre + 2, Taille_Carre - 4, Taille_Carre - 4))
 
 
 def drawBoard(screen, Plateau, action, Potentiel):
@@ -560,6 +567,85 @@ def drawPiece(screen, board):
                 screen.blit(image[piece], pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre ))
 
 
+def Recyclage_pion(screen, Plateau, action, couleur, M, N):
+    
+    drawGameState(screen, Plateau, action, [])
+    
+    if couleur == 1 :
+        for i in range (3,5):
+            for j in range (8):
+                pygame.draw.rect(screen, (40,40,40), pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre ))
+        texte = pygame.font.Font('freesansbold.ttf',30).render("Choisissez la nouvelle pièce",False,(250,250,250))
+        texte_centre = texte.get_rect()
+        texte_centre.center = (4*Taille_Carre, 3.5*Taille_Carre)
+        j = 32
+        for piece in ["Tb", "Cb", "Fb", "Db"]:
+            screen.blit(image[piece], pygame.Rect(j, 4*Taille_Carre-15, Taille_Carre, Taille_Carre ))
+            j += 2*Taille_Carre
+    
+    if couleur == -1 :
+        for i in range (3,5):
+            for j in range (8):
+                pygame.draw.rect(screen, (250,250,250), pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre ))
+        texte = pygame.font.Font('freesansbold.ttf',30).render("Choisissez la nouvelle pièce",False,(40,40,40))
+        texte_centre = texte.get_rect()
+        texte_centre.center = (4*Taille_Carre, 3.5*Taille_Carre)
+        j = 32
+        for piece in ["Tn", "Cn", "Fn", "Dn"]:
+            screen.blit(image[piece], pygame.Rect(j, 4*Taille_Carre-15, Taille_Carre, Taille_Carre ))
+            j += 2*Taille_Carre
+    
+    
+    screen.blit(texte, texte_centre)
+    pygame.display.flip()
+    run_recyclage = True
+    while run_recyclage :
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                choix = pygame.mouse.get_pos()
+                print(choix)
+                if 246 < choix[1] < 304 :
+                    if 40 < choix[0] < 85 :
+                        if couleur == 1 : 
+                            Plateau[M][N] = 'Tb'
+                        if couleur == -1:
+                            Plateau[M][N] = 'Tn'
+                        G[M][N] = Tour(couleur)
+                        return (G, Plateau)
+                    if 168 < choix[0] < 213 :
+                        if couleur == 1 : 
+                            Plateau[M][N] = 'Cb'
+                        if couleur == -1:
+                            Plateau[M][N] = 'Cn'
+                        G[M][N] = Cavalier(couleur)
+                        return (G, Plateau)
+                    if 293 < choix [0] < 350 : 
+                        if couleur == 1 : 
+                            Plateau[M][N] = 'Fb'
+                        if couleur == -1:
+                            Plateau[M][N] = 'Fn'
+                        G[M][N] = Fou(couleur)
+                        return (G, Plateau)
+                    if 424 < choix [0] < 469 : 
+                        if couleur == 1 : 
+                            Plateau[M][N] = 'Db'
+                        if couleur == -1:
+                            Plateau[M][N] = 'Dn'
+                        G[M][N] = Dame(couleur)
+                        return (G, Plateau)
+            if event.type == pygame.QUIT:
+                running = False
+                run_recyclage = False
+                pygame.quit()
+                
+            
+            
+                
+            
+    
+    
+
+
 ## Programme principal
 import copy
 
@@ -572,7 +658,7 @@ def main():
     A = GameState()
     Plateau = A.board
     pygame.display.set_caption("Échecs")
-    icon = pygame.image.load('C:/Users/Jerome/Documents/chess.png')
+    icon = pygame.image.load('C:/Users/ulysse/Documents/cpes/L2/algorithmie/chess.png')
     pygame.display.set_icon(icon)
     screen.fill((0, 0, 0))
     LoadImage()
@@ -588,7 +674,7 @@ def main():
     Potentiel = []
     Royal = [0, 3, 7, 3]
 
-    while running:
+    while running :
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -597,7 +683,7 @@ def main():
                 print(test)
                 pygame.quit()
 
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN :
 
                 coul = (-1)**(joueur%2)
                 location = pygame.mouse.get_pos()
@@ -635,8 +721,7 @@ def main():
                     action = False
                     M = Ligne
                     N = Colonne
-                    mouvement(G,X,Y,N,M,Plateau,joueur,coul,A, Royal)
-                    print(Royal)
+                    mouvement(G,X,Y,N,M,Plateau,joueur,coul,A, Royal, screen, action)
                     joueur += 1
 
 
