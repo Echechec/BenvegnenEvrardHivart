@@ -659,7 +659,7 @@ def drawFin(screen, mat, pat, abandon, Antijeu,autorisation):
 
         pygame.display.flip()
 
-    if pat[0]:
+    if pat[0] and not mat[0]:
         pygame.draw.rect(screen,(255,0,127), pygame.Rect(0, 221, 8*Taille_Carre, 70))
 
         texte = pygame.font.Font('freesansbold.ttf',30).render("Pat' chance",True,(40,40,40))
