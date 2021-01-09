@@ -420,7 +420,7 @@ if False:
 # nouveau est la dernière pièce à être jouée, dans son emplacement d'arivée
 
 
-def mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, Antijeu):
+def mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, Antijeu, long):
     if G[X][Y].type == "Roi":
         if coul == -1:
             Royal[2], Royal[3], Royal[0], Royal[1] = M, N, Royal[0], Royal[1]
@@ -470,9 +470,9 @@ def mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, A
 
         # pion en bout de ligne : changement de pièce
     if G[M][N].type == "Pion" and G[M][N].couleur == 1 and M == 7:
-        Recyclage_pion(screen, Plateau, action, 1, M, N)
+        Recyclage_pion(screen, Plateau, action, 1, M, N, long)
     if G[M][N].type == "Pion" and G[M][N].couleur == -1 and M == 0:
-        Recyclage_pion(screen, Plateau, action, -1, M, N)
+        Recyclage_pion(screen, Plateau, action, -1, M, N, long)
 
         # Progression des tours de jeux
     # Mystérieusement on doit le faire hors de la fonction sinon ça ne fonctionne pas ???? joueur += 1
@@ -615,7 +615,7 @@ def drawPiece(screen, board):
                 screen.blit(image[piece], pygame.Rect(j * Taille_Carre, i * Taille_Carre, Taille_Carre, Taille_Carre))
 
 
-def Recyclage_pion(screen, Plateau, action, couleur, M, N):
+def Recyclage_pion(screen, Plateau, action, couleur, M, N, long):
     drawGameState(screen, Plateau, action, [], long)
 
     if couleur == 1:
@@ -775,7 +775,7 @@ def main():
                     M = Ligne
                     N = Colonne
                     lon = len(memoire)
-                    mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, Antijeu)
+                    mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, Antijeu, long)
                     if lon != len(memoire): long += len(memoire) - lon
                     else: long = 0
 
