@@ -1,361 +1,365 @@
+import copy as cp
+
 ## Classes
 class Vide():
 
     def __init__(self):
-         self.couleur = 0
-         self.type = "Vide"
-
+        self.couleur = 0
+        self.type = "Vide"
 
 
 class Pion():
-    def __init__(self,couleur):
+    def __init__(self, couleur):
         self.couleur = couleur
-        self.ligneInitiale = int(-3.5*couleur + 3.5)
+        self.ligneInitiale = int(-3.5 * couleur + 3.5)
         self.type = "Pion"
         self.imprudence = False
 
-    def possibilitesAbsolues(self,a,b):
-        __Cases=[]
-        if a in range(1,7):
-            #déplacement normal
-            if G[a+self.couleur][b].couleur == 0:
-                __Cases.append((a+self.couleur,b))
+    def possibilitesAbsolues(self, a, b):
+        __Cases = []
+        if a in range(1, 7):
+            # déplacement normal
+            if G[a + self.couleur][b].couleur == 0:
+                __Cases.append((a + self.couleur, b))
 
-            #déplacement de deux cases du début
-            if a == self.ligneInitiale+self.couleur and G[a+self.couleur][b].couleur == 0 and G[a+2*self.couleur][b].couleur == 0:
-                __Cases.append((a+2*self.couleur,b))
+            # déplacement de deux cases du début
+            if a == self.ligneInitiale + self.couleur and G[a + self.couleur][b].couleur == 0 and \
+                    G[a + 2 * self.couleur][b].couleur == 0:
+                __Cases.append((a + 2 * self.couleur, b))
 
+            # déplacement pour manger une pièce adverse
+            for k in [1, -1]:
+                if b + k < 8 and b + k > -1 and G[a + self.couleur][b + k].couleur == (-1) * self.couleur:
+                    __Cases.append((a + self.couleur, b + k))
 
-            #déplacement pour manger une pièce adverse
-            for k in [1,-1]:
-                if b+k < 8 and b+k > -1 and G[a+self.couleur][b+k].couleur == (-1)*self.couleur:
-                    __Cases.append((a+self.couleur,b+k))
-
-            #Prise en passant
-            if a == self.ligneInitiale + self.couleur*4 :
-                if b != 7 and G[a][b+1].type == "Pion" and G[a][b+1].couleur == -self.couleur and G[a][b+1].imprudence and G[a+self.couleur][b+1].type == "Vide":
-                    __Cases.append((a+self.couleur,b+1))
-                if b != 0 and G[a][b-1].type == "Pion" and G[a][b-1].couleur == -self.couleur and G[a][b-1].imprudence and G[a+self.couleur][b-1].type == "Vide":
-                    __Cases.append((a+self.couleur,b-1))
+            # Prise en passant
+            if a == self.ligneInitiale + self.couleur * 4:
+                if b != 7 and G[a][b + 1].type == "Pion" and G[a][b + 1].couleur == -self.couleur and G[a][
+                    b + 1].imprudence and G[a + self.couleur][b + 1].type == "Vide":
+                    __Cases.append((a + self.couleur, b + 1))
+                if b != 0 and G[a][b - 1].type == "Pion" and G[a][b - 1].couleur == -self.couleur and G[a][
+                    b - 1].imprudence and G[a + self.couleur][b - 1].type == "Vide":
+                    __Cases.append((a + self.couleur, b - 1))
         return __Cases
 
-
-    def possibilites(self,a,b,Royal):
-        _Cases_absolues = self.possibilitesAbsolues(a,b)
+    def possibilites(self, a, b, Royal):
+        _Cases_absolues = self.possibilitesAbsolues(a, b)
         _Cases_interdites = []
         for i in _Cases_absolues:
-            (c,d) = i
+            (c, d) = i
             memo = G[c][d]
             G[c][d] = G[a][b]
             G[a][b] = Vide()
             if self.couleur == 1:
-                if vulnerabilite(Royal[0],Royal[1],-1):
+                if vulnerabilite(Royal[0], Royal[1], -1):
                     _Cases_interdites.append(i)
             if self.couleur == -1:
-                if vulnerabilite(Royal[2],Royal[3],1):
+                if vulnerabilite(Royal[2], Royal[3], 1):
                     _Cases_interdites.append(i)
             G[a][b] = G[c][d]
             G[c][d] = memo
         _Cases_autorisees = []
-        for i in _Cases_absolues :
-            if not i in _Cases_interdites :
+        for i in _Cases_absolues:
+            if not i in _Cases_interdites:
                 _Cases_autorisees.append(i)
         return _Cases_autorisees
 
-#imprudence est un booléen activé lorsqu'un pion avance de 2, et immédiatement désactivé le coup suivant
+
+# imprudence est un booléen activé lorsqu'un pion avance de 2, et immédiatement désactivé le coup suivant
 
 class Cavalier():
 
-    def __init__(self,couleur):
+    def __init__(self, couleur):
         self.couleur = couleur
-        self.ligneInitiale = int(-3.5*couleur + 3.5)
+        self.ligneInitiale = int(-3.5 * couleur + 3.5)
         self.type = "Cavalier"
 
-
-    def possibilitesAbsolues(self,a,b):
+    def possibilitesAbsolues(self, a, b):
         __Cases = []
-        for c in range(a-2,a+3):
-            for d in range(b-2,b+3):
-                i = a-c
-                j = b-d
-                if i**2+j**2 == 5 and c < 8 and c > -1 and d < 8 and d > -1 and G[c][d].couleur != self.couleur :
-                        __Cases += [(c,d)]
-        return(__Cases)
+        for c in range(a - 2, a + 3):
+            for d in range(b - 2, b + 3):
+                i = a - c
+                j = b - d
+                if i ** 2 + j ** 2 == 5 and c < 8 and c > -1 and d < 8 and d > -1 and G[c][d].couleur != self.couleur:
+                    __Cases += [(c, d)]
+        return (__Cases)
 
-    def possibilites(self,a,b,Royal):
-        _Cases_absolues = self.possibilitesAbsolues(a,b)
+    def possibilites(self, a, b, Royal):
+        _Cases_absolues = self.possibilitesAbsolues(a, b)
         _Cases_interdites = []
         for i in _Cases_absolues:
-            (c,d) = i
+            (c, d) = i
             memo = G[c][d]
             G[c][d] = G[a][b]
             G[a][b] = Vide()
             if self.couleur == 1:
-                if vulnerabilite(Royal[0],Royal[1],-1):
+                if vulnerabilite(Royal[0], Royal[1], -1):
                     _Cases_interdites.append(i)
             if self.couleur == -1:
-                if vulnerabilite(Royal[2],Royal[3],1):
+                if vulnerabilite(Royal[2], Royal[3], 1):
                     _Cases_interdites.append(i)
             G[a][b] = G[c][d]
             G[c][d] = memo
         _Cases_autorisees = []
-        for i in _Cases_absolues :
-            if not i in _Cases_interdites :
+        for i in _Cases_absolues:
+            if not i in _Cases_interdites:
                 _Cases_autorisees.append(i)
         return _Cases_autorisees
 
 
 class Tour():
-    def __init__(self,couleur):
-        self.couleur=couleur
-        self.ligneInitiale = int(-3.5*couleur + 3.5)
+    def __init__(self, couleur):
+        self.couleur = couleur
+        self.ligneInitiale = int(-3.5 * couleur + 3.5)
         self.type = "Tour"
         self.virginite = True
 
-    def possibilitesAbsolues(self,a,b):
+    def possibilitesAbsolues(self, a, b):
         __Cases = []
-        c = a+1
+        c = a + 1
         while c < 8 and G[c][b].couleur != self.couleur:
-            __Cases.append((c,b))
-            if G[c][b].couleur == (-1)*self.couleur:
+            __Cases.append((c, b))
+            if G[c][b].couleur == (-1) * self.couleur:
                 c = 8
             c += 1
-        c = a-1
+        c = a - 1
         while c > -1 and G[c][b].couleur != self.couleur:
-            __Cases.append((c,b))
-            if G[c][b].couleur == (-1)*self.couleur:
+            __Cases.append((c, b))
+            if G[c][b].couleur == (-1) * self.couleur:
                 c = -1
             c -= 1
-        d = b+1
+        d = b + 1
         while d < 8 and G[a][d].couleur != self.couleur:
-            __Cases.append((a,d))
-            if G[a][d].couleur == (-1)*self.couleur:
+            __Cases.append((a, d))
+            if G[a][d].couleur == (-1) * self.couleur:
                 d = 8
             d += 1
-        d = b-1
+        d = b - 1
         while d > -1 and G[a][d].couleur != self.couleur:
-            __Cases.append((a,d))
-            if G[a][d].couleur == (-1)*self.couleur:
+            __Cases.append((a, d))
+            if G[a][d].couleur == (-1) * self.couleur:
                 d = -1
             d -= 1
         return __Cases
 
-    def possibilites(self,a,b,Royal):
-        _Cases_absolues = self.possibilitesAbsolues(a,b)
+    def possibilites(self, a, b, Royal):
+        _Cases_absolues = self.possibilitesAbsolues(a, b)
         _Cases_interdites = []
         for i in _Cases_absolues:
-            (c,d) = i
+            (c, d) = i
             memo = G[c][d]
             G[c][d] = G[a][b]
             G[a][b] = Vide()
             if self.couleur == 1:
-                if vulnerabilite(Royal[0],Royal[1],-1):
+                if vulnerabilite(Royal[0], Royal[1], -1):
                     _Cases_interdites.append(i)
             if self.couleur == -1:
-                if vulnerabilite(Royal[2],Royal[3],1):
+                if vulnerabilite(Royal[2], Royal[3], 1):
                     _Cases_interdites.append(i)
             G[a][b] = G[c][d]
             G[c][d] = memo
         _Cases_autorisees = []
-        for i in _Cases_absolues :
-            if not i in _Cases_interdites :
+        for i in _Cases_absolues:
+            if not i in _Cases_interdites:
                 _Cases_autorisees.append(i)
         return _Cases_autorisees
 
 
 class Fou():
-    def __init__(self,couleur):
+    def __init__(self, couleur):
         self.couleur = couleur
-        self.ligneInitiale = int(-3.5*couleur + 3.5)
+        self.ligneInitiale = int(-3.5 * couleur + 3.5)
         self.type = "Fou"
 
-    def possibilitesAbsolues(self,a,b):
+    def possibilitesAbsolues(self, a, b):
         __Cases = []
         l = 1
-        while a+l < 8 and b+l < 8 and G[a+l][b+l].couleur != self.couleur:
-            __Cases.append((a+l,b+l))
-            if G[a+l][b+l].couleur == (-1)*self.couleur:
+        while a + l < 8 and b + l < 8 and G[a + l][b + l].couleur != self.couleur:
+            __Cases.append((a + l, b + l))
+            if G[a + l][b + l].couleur == (-1) * self.couleur:
                 l = 8
             l += 1
         l = 1
-        while a-l > -1 and b-l > -1 and G[a-l][b-l].couleur != self.couleur:
-            __Cases.append((a-l,b-l))
-            if G[a-l][b-l].couleur == (-1)*self.couleur:
+        while a - l > -1 and b - l > -1 and G[a - l][b - l].couleur != self.couleur:
+            __Cases.append((a - l, b - l))
+            if G[a - l][b - l].couleur == (-1) * self.couleur:
                 l = -1
             l += 1
         l = 1
-        while a+l < 8 and b-l > -1 and G[a+l][b-l].couleur != self.couleur:
-            __Cases.append((a+l,b-l))
-            if G[a+l][b-l].couleur == (-1)*self.couleur:
+        while a + l < 8 and b - l > -1 and G[a + l][b - l].couleur != self.couleur:
+            __Cases.append((a + l, b - l))
+            if G[a + l][b - l].couleur == (-1) * self.couleur:
                 l = 8
             l += 1
         l = 1
-        while a-l > -1 and b+l < 8 and G[a-l][b+l].couleur != self.couleur:
-            __Cases.append((a-l,b+l))
-            if G[a-l][b+l].couleur == (-1)*self.couleur:
+        while a - l > -1 and b + l < 8 and G[a - l][b + l].couleur != self.couleur:
+            __Cases.append((a - l, b + l))
+            if G[a - l][b + l].couleur == (-1) * self.couleur:
                 l = -1
             l += 1
         return __Cases
 
-    def possibilites(self,a,b,Royal):
-        _Cases_absolues = self.possibilitesAbsolues(a,b)
+    def possibilites(self, a, b, Royal):
+        _Cases_absolues = self.possibilitesAbsolues(a, b)
         _Cases_interdites = []
         for i in _Cases_absolues:
-            (c,d) = i
+            (c, d) = i
             memo = G[c][d]
             G[c][d] = G[a][b]
             G[a][b] = Vide()
             if self.couleur == 1:
-                if vulnerabilite(Royal[0],Royal[1],-1):
+                if vulnerabilite(Royal[0], Royal[1], -1):
                     _Cases_interdites.append(i)
             if self.couleur == -1:
-                if vulnerabilite(Royal[2],Royal[3],1):
+                if vulnerabilite(Royal[2], Royal[3], 1):
                     _Cases_interdites.append(i)
             G[a][b] = G[c][d]
             G[c][d] = memo
         _Cases_autorisees = []
-        for i in _Cases_absolues :
-            if not i in _Cases_interdites :
+        for i in _Cases_absolues:
+            if not i in _Cases_interdites:
                 _Cases_autorisees.append(i)
         return _Cases_autorisees
 
 
-
 class Dame():
 
-    def __init__(self,couleur):
+    def __init__(self, couleur):
         self.couleur = couleur
-        self.ligneInitiale = int(-3.5*couleur + 3.5)
+        self.ligneInitiale = int(-3.5 * couleur + 3.5)
         self.type = "Dame"
 
-    def possibilitesAbsolues(self,a,b):
+    def possibilitesAbsolues(self, a, b):
         __Cases = []
         l = 1
-        while a+l < 8 and b+l < 8 and G[a+l][b+l].couleur != self.couleur:
-            __Cases.append((a+l,b+l))
-            if G[a+l][b+l].couleur == (-1)*self.couleur:
+        while a + l < 8 and b + l < 8 and G[a + l][b + l].couleur != self.couleur:
+            __Cases.append((a + l, b + l))
+            if G[a + l][b + l].couleur == (-1) * self.couleur:
                 l = 8
             l += 1
         l = 1
-        while a-l > -1 and b-l > -1 and G[a-l][b-l].couleur != self.couleur:
-            __Cases.append((a-l,b-l))
-            if G[a-l][b-l].couleur == (-1)*self.couleur:
+        while a - l > -1 and b - l > -1 and G[a - l][b - l].couleur != self.couleur:
+            __Cases.append((a - l, b - l))
+            if G[a - l][b - l].couleur == (-1) * self.couleur:
                 l = -1
             l += 1
         l = 1
-        while a+l < 8 and b-l > -1 and G[a+l][b-l].couleur != self.couleur:
-            __Cases.append((a+l,b-l))
-            if G[a+l][b-l].couleur == (-1)*self.couleur:
+        while a + l < 8 and b - l > -1 and G[a + l][b - l].couleur != self.couleur:
+            __Cases.append((a + l, b - l))
+            if G[a + l][b - l].couleur == (-1) * self.couleur:
                 l = 8
             l += 1
         l = 1
-        while a-l > -1 and b+l < 8 and G[a-l][b+l].couleur != self.couleur:
-            __Cases.append((a-l,b+l))
-            if G[a-l][b+l].couleur == (-1)*self.couleur:
+        while a - l > -1 and b + l < 8 and G[a - l][b + l].couleur != self.couleur:
+            __Cases.append((a - l, b + l))
+            if G[a - l][b + l].couleur == (-1) * self.couleur:
                 l = -1
             l += 1
-        c = a+1
+        c = a + 1
         while c < 8 and G[c][b].couleur != self.couleur:
-            __Cases.append((c,b))
-            if G[c][b].couleur == (-1)*self.couleur:
+            __Cases.append((c, b))
+            if G[c][b].couleur == (-1) * self.couleur:
                 c = 8
             c += 1
-        c = a-1
+        c = a - 1
         while c > -1 and G[c][b].couleur != self.couleur:
-            __Cases.append((c,b))
-            if G[c][b].couleur == (-1)*self.couleur:
+            __Cases.append((c, b))
+            if G[c][b].couleur == (-1) * self.couleur:
                 c = -1
             c -= 1
-        d = b+1
+        d = b + 1
         while d < 8 and G[a][d].couleur != self.couleur:
-            __Cases.append((a,d))
-            if G[a][d].couleur == (-1)*self.couleur:
+            __Cases.append((a, d))
+            if G[a][d].couleur == (-1) * self.couleur:
                 d = 8
             d += 1
-        d = b-1
+        d = b - 1
         while d > -1 and G[a][d].couleur != self.couleur:
-            __Cases.append((a,d))
-            if G[a][d].couleur == (-1)*self.couleur:
+            __Cases.append((a, d))
+            if G[a][d].couleur == (-1) * self.couleur:
                 d = -1
             d -= 1
         return __Cases
 
-    def possibilites(self,a,b,Royal):
-        _Cases_absolues = self.possibilitesAbsolues(a,b)
+    def possibilites(self, a, b, Royal):
+        _Cases_absolues = self.possibilitesAbsolues(a, b)
         _Cases_interdites = []
         for i in _Cases_absolues:
-            (c,d) = i
+            (c, d) = i
             memo = G[c][d]
             G[c][d] = G[a][b]
             G[a][b] = Vide()
             if self.couleur == 1:
-                if vulnerabilite(Royal[0],Royal[1],-1):
+                if vulnerabilite(Royal[0], Royal[1], -1):
                     _Cases_interdites.append(i)
             if self.couleur == -1:
-                if vulnerabilite(Royal[2],Royal[3],1):
+                if vulnerabilite(Royal[2], Royal[3], 1):
                     _Cases_interdites.append(i)
             G[a][b] = G[c][d]
             G[c][d] = memo
         _Cases_autorisees = []
-        for i in _Cases_absolues :
-            if not i in _Cases_interdites :
+        for i in _Cases_absolues:
+            if not i in _Cases_interdites:
                 _Cases_autorisees.append(i)
         return _Cases_autorisees
 
 
 class Roi():
-    def __init__(self,couleur):
+    def __init__(self, couleur):
         self.couleur = couleur
-        self.ligneInitiale = int(-3.5*couleur + 3.5)
+        self.ligneInitiale = int(-3.5 * couleur + 3.5)
         self.type = "Roi"
         self.virginite = True
 
-    def possibilitesAbsolues(self,a,b):
+    def possibilitesAbsolues(self, a, b):
         __Cases = []
         for i in [-1, 0, 1]:
             for j in [-1, 0, 1]:
-                c=a+i
-                d=b+j
-                if c<8 and d<8 and c>-1 and d>-1 and G[c][d].couleur!=self.couleur :
-                    __Cases.append((c,d))
-        return(__Cases)
+                c = a + i
+                d = b + j
+                if c < 8 and d < 8 and c > -1 and d > -1 and G[c][d].couleur != self.couleur:
+                    __Cases.append((c, d))
+        return (__Cases)
 
     def roquabilite(self):
-        r = [False,False]
+        r = [False, False]
         cou = self.couleur
         L = self.ligneInitiale
-        petitRoque = not(vulnerabilite(L,1,-cou) or vulnerabilite(L,2,-cou) or vulnerabilite(L,3,-cou))
-        grandRoque = not(vulnerabilite(L,3,-cou) or vulnerabilite(L,4,-cou) or vulnerabilite(L,5,-cou))
+        petitRoque = not (vulnerabilite(L, 1, -cou) or vulnerabilite(L, 2, -cou) or vulnerabilite(L, 3, -cou))
+        grandRoque = not (vulnerabilite(L, 3, -cou) or vulnerabilite(L, 4, -cou) or vulnerabilite(L, 5, -cou))
         if self.virginite:
-            if  G[L][1].type == "Vide" and G[L][2].type == "Vide" and petitRoque and G[L][0].type == "Tour" and G[L][0].virginite :
+            if G[L][1].type == "Vide" and G[L][2].type == "Vide" and petitRoque and G[L][0].type == "Tour" and G[L][
+                0].virginite:
                 r[0] = True
-            if G[L][4].type == "Vide" and G[L][5].type == "Vide" and G[L][6].type == "Vide" and grandRoque and G[L][7].type == "Tour" and G[L][7].virginite:
+            if G[L][4].type == "Vide" and G[L][5].type == "Vide" and G[L][6].type == "Vide" and grandRoque and G[L][
+                7].type == "Tour" and G[L][7].virginite:
                 r[1] = True
-        return(r)
+        return (r)
 
-    def possibilites(self,a,b,Royal):
-        _Cases_absolues = self.possibilitesAbsolues(a,b)
+    def possibilites(self, a, b, Royal):
+        _Cases_absolues = self.possibilitesAbsolues(a, b)
         _Cases_interdites = []
         for i in _Cases_absolues:
-            (c,d) = i
+            (c, d) = i
             memo = G[c][d]
             G[c][d] = G[a][b]
             G[a][b] = Vide()
-            if vulnerabilite(c,d,-1*self.couleur):
+            if vulnerabilite(c, d, -1 * self.couleur):
                 _Cases_interdites.append(i)
             G[a][b] = G[c][d]
             G[c][d] = memo
         _Cases_autorisees = []
-        for i in _Cases_absolues :
-            if not i in _Cases_interdites :
+        for i in _Cases_absolues:
+            if not i in _Cases_interdites:
                 _Cases_autorisees.append(i)
-        if self.roquabilite()[0] :
-            _Cases_autorisees.append((self.ligneInitiale,1))
-        if self.roquabilite()[1] :
-            _Cases_autorisees.append((self.ligneInitiale,5))
+        if self.roquabilite()[0]:
+            _Cases_autorisees.append((self.ligneInitiale, 1))
+        if self.roquabilite()[1]:
+            _Cases_autorisees.append((self.ligneInitiale, 5))
         return _Cases_autorisees
 
-#roquabilite renvoie [True,True] si les deux roques sont possibles (donc si le joueur a sélectionné le roi), [True,Flase] si le petit roque est possible, [False,True] si le grand roque est possible.
+
+# roquabilite renvoie [True,True] si les deux roques sont possibles (donc si le joueur a sélectionné le roi), [True,Flase] si le petit roque est possible, [False,True] si le grand roque est possible.
 
 ## Grille
 G = []
@@ -365,152 +369,187 @@ for i in range(8):
         g += [0]
     G += [g]
 
-G[0][0]=Tour(1)
-G[0][7]=Tour(1)
-G[7][0]=Tour(-1)
-G[7][7]=Tour(-1)
+G[0][0] = Tour(1)
+G[0][7] = Tour(1)
+G[7][0] = Tour(-1)
+G[7][7] = Tour(-1)
 
-G[0][1]=Cavalier(1)
-G[0][6]=Cavalier(1)
-G[7][1]=Cavalier(-1)
-G[7][6]=Cavalier(-1)
+G[0][1] = Cavalier(1)
+G[0][6] = Cavalier(1)
+G[7][1] = Cavalier(-1)
+G[7][6] = Cavalier(-1)
 
-G[0][2]=Fou(1)
-G[0][5]=Fou(1)
-G[7][2]=Fou(-1)
-G[7][5]=Fou(-1)
+G[0][2] = Fou(1)
+G[0][5] = Fou(1)
+G[7][2] = Fou(-1)
+G[7][5] = Fou(-1)
 
-G[0][3]=Roi(1)
-G[0][4]=Dame(1)
-G[7][3]=Roi(-1)
-G[7][4]=Dame(-1)
+G[0][3] = Roi(1)
+G[0][4] = Dame(1)
+G[7][3] = Roi(-1)
+G[7][4] = Dame(-1)
 
-for k in range (8):
-    G[1][k]= Pion(1)
-    G[6][k]= Pion(-1)
+for k in range(8):
+    G[1][k] = Pion(1)
+    G[6][k] = Pion(-1)
 
-for i in range (2, 6):
+for i in range(2, 6):
     for j in range(8):
-        G[i][j]=Vide()
-
-
-
+        G[i][j] = Vide()
 
 
 ## Corps
-def vulnerabilite(a,b,couleur):
-
+def vulnerabilite(a, b, couleur):
     for c in range(8):
         for d in range(8):
             if G[c][d].couleur == couleur:
-                if (a,b) in G[c][d].possibilitesAbsolues(c,d):
+                if (a, b) in G[c][d].possibilitesAbsolues(c, d):
                     return True
     return False
 
-#(Royal[0],Royal[1]) position du roi blanc
-#(Royal[2],Royal[3]) position du roi noir
-#(X,Y) case sur laquelle l'utilisateur clique au début de son tour
 
-#Si joueur est pair alors les pièces blanches peuvent être sélectionnées, sinon les pièces noires --> couleur = 1**(joueur%2)
+# (Royal[0],Royal[1]) position du roi blanc
+# (Royal[2],Royal[3]) position du roi noir
+# (X,Y) case sur laquelle l'utilisateur clique au début de son tour
+
+# Si joueur est pair alors les pièces blanches peuvent être sélectionnées, sinon les pièces noires --> couleur = 1**(joueur%2)
 joueur = 0
 
-if False :
+if False:
     X = abscisse_du_clic
     Y = ordonnée_du_clic
 
+# nouveau est la dernière pièce à être jouée, dans son emplacement d'arivée
 
-#nouveau est la dernière pièce à être jouée, dans son emplacement d'arivée
 
-
-def mouvement(G,X,Y,N,M,Plateau,joueur,coul,A, Royal, screen, action):
-
+def mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, Antijeu):
     if G[X][Y].type == "Roi":
-        if coul == -1: Royal[2], Royal[3], Royal[0], Royal[1] = M, N, Royal[0], Royal[1]
-        else: Royal[2], Royal[3], Royal[0], Royal[1],  = Royal[2], Royal[3], M, N
+        if coul == -1:
+            Royal[2], Royal[3], Royal[0], Royal[1] = M, N, Royal[0], Royal[1]
+        else:
+            Royal[2], Royal[3], Royal[0], Royal[1], = Royal[2], Royal[3], M, N
 
-                    #éteignage imprudence
-    for i in range(0,7):
-        for j in range(0,7):
+        # éteignage imprudence
+    for i in range(0, 7):
+        for j in range(0, 7):
             if G[i][j].type == "Pion": G[i][j].imprudence = False
 
-                    #réinitialisation de la grille
+
     CopiePriseEnPassant = G[M][N]
+    if G[M][N].type != "Vide": memoire = []
+    if G[X][Y].type == "Pion": memoire = []
+    if (G[X][Y].type == "Tour" or G[X][Y].type == "Roi") and G[X][Y].virginite: memoire = []
+
+    # réinitialisation de la grille
+
     G[M][N] = G[X][Y]
     G[X][Y] = Vide()
     nouveau = G[M][N]
 
-                    #allumage de l'imprudence
-    if nouveau.type == "Pion" and (X-M)**2 == 4 : nouveau.imprudence = True
-                    #éteignage de la virginité
-    if nouveau.type == "Tour" or nouveau.type == "Roi" : nouveau.virginite = False
+    # allumage de l'imprudence
+    if nouveau.type == "Pion" and (X - M) ** 2 == 4: nouveau.imprudence = True
+    # éteignage de la virginité
+    if nouveau.type == "Tour" or nouveau.type == "Roi":
+        nouveau.virginite = False
 
-                    #effet du roque
-    if G[M][N].type == "Roi" and (Y-N)**2 == 4:
+
+    # effet du roque
+    if G[M][N].type == "Roi" and (Y - N) ** 2 == 4:
         if N == 1:
             G[G[M][N].ligneInitiale][2] = G[G[M][N].ligneInitiale][0]
             G[G[M][N].ligneInitiale][0] = Vide()
-            A.MakeMove(Deplacement((G[M][N].ligneInitiale,0), (G[M][N].ligneInitiale,2), Plateau))
+            A.MakeMove(Deplacement((G[M][N].ligneInitiale, 0), (G[M][N].ligneInitiale, 2), Plateau))
 
         if N == 5:
             G[G[M][N].ligneInitiale][4] = G[G[M][N].ligneInitiale][7]
             G[G[M][N].ligneInitiale][7] = Vide()
-            A.MakeMove(Deplacement((G[M][N].ligneInitiale,7), (G[M][N].ligneInitiale,4), Plateau))
+            A.MakeMove(Deplacement((G[M][N].ligneInitiale, 7), (G[M][N].ligneInitiale, 4), Plateau))
 
-                    #effet de la prise en passant
-    if G[M][N].type == "Pion" and (X-M)**2+(Y-N)**2 == 2 and CopiePriseEnPassant.type == "Vide":
+            # effet de la prise en passant
+    if G[M][N].type == "Pion" and (X - M) ** 2 + (Y - N) ** 2 == 2 and CopiePriseEnPassant.type == "Vide":
         G[X][N] = Vide()
         Plateau[X][N] = "_"
-        
-                    #pion en bout de ligne : changement de pièce
+
+        # pion en bout de ligne : changement de pièce
     if G[M][N].type == "Pion" and G[M][N].couleur == 1 and M == 7:
         Recyclage_pion(screen, Plateau, action, 1, M, N)
     if G[M][N].type == "Pion" and G[M][N].couleur == -1 and M == 0:
         Recyclage_pion(screen, Plateau, action, -1, M, N)
-    
-        
-    
-                    #Progression des tours de jeux
-# Mystérieusement on doit le faire hors de la fonction sinon ça ne fonctionne pas ???? joueur += 1
 
-                    #PAT
+        # Progression des tours de jeux
+    # Mystérieusement on doit le faire hors de la fonction sinon ça ne fonctionne pas ???? joueur += 1
+
+    # PAT
     ok = []
     a = 0
-    while ok == [] and a < 8 :
+    while ok == [] and a < 8:
         b = 0
         while ok == [] and b < 8:
-            if G[a][b].couleur == (-1)*coul:
-                for i in G[a][b].possibilites(a,b,Royal):
+            if G[a][b].couleur == (-1) * coul:
+                for i in G[a][b].possibilites(a, b, Royal):
                     ok += [i]
             b += 1
         a += 1
-    if ok == []: pat = True
-    else : pat = False
-    return(G,Plateau,pat,joueur, Royal)
+    if ok == []:
+        pat = True
+    else:
+        pat = False
+
+    # Vérification d'une situation de répétition abusive du plateau de jeu
+
+    Goug = []
+    for i in range(8):
+        l = []
+        for j in range(8):
+            l += [G[i][j].type]
+        Goug += l
+
+    c = 0
+    for i in range(len(memoire)):
+        if memoire[i] == (Goug, coul):
+            c += 1
+            if c == 2: Antijeu[0] = True
+
+
+    gag = []
+    for i in range(8):
+        l = []
+        for j in range(8):
+            l += [G[i][j].type]
+        gag += l
+
+    memoire += [(gag,coul)]
+
+
+    return (G, Plateau, pat, Royal, memoire, Antijeu)
+
 
 ## Interface
 
 import pygame
 
+
 class GameState():
     def __init__(self):
-        self.board=[
-            ["Tb", "Cb", "Fb", "Rb", "Db", "Fb", "Cb", "Tb","bord","bord","bord","bord"],
-            ["pb", "pb", "pb", "pb", "pb", "pb", "pb", "pb","bord","bord","bord","bord"],
-            ["_", "_", "_", "_", "_", "_", "_", "_","bord","bord","bord","bord"],
-            ["_", "_", "_", "_", "_", "_", "_", "_","bord","bord","bord","bord"],
-            ["_", "_", "_", "_", "_", "_", "_", "_","bord","bord","bord","bord"],
-            ["_", "_", "_", "_", "_", "_", "_", "_","bord","bord","bord","bord"],
-            ["pn", "pn", "pn", "pn", "pn", "pn", "pn", "pn","bord","bord","bord","bord"],
-            ["Tn", "Cn", "Fn", "Rn", "Dn", "Fn", "Cn", "Tn","bord","bord","bord","bord"]
+        self.board = [
+            ["Tb", "Cb", "Fb", "Rb", "Db", "Fb", "Cb", "Tb", "bord", "bord", "bord", "bord"],
+            ["pb", "pb", "pb", "pb", "pb", "pb", "pb", "pb", "bord", "bord", "bord", "bord"],
+            ["_", "_", "_", "_", "_", "_", "_", "_", "bord", "bord", "bord", "bord"],
+            ["_", "_", "_", "_", "_", "_", "_", "_", "bord", "bord", "bord", "bord"],
+            ["_", "_", "_", "_", "_", "_", "_", "_", "bord", "bord", "bord", "bord"],
+            ["_", "_", "_", "_", "_", "_", "_", "_", "bord", "bord", "bord", "bord"],
+            ["pn", "pn", "pn", "pn", "pn", "pn", "pn", "pn", "bord", "bord", "bord", "bord"],
+            ["Tn", "Cn", "Fn", "Rn", "Dn", "Fn", "Cn", "Tn", "bord", "bord", "bord", "bord"]
         ]
         self.whiteToMove = True
-        self.moveLog=[]
+        self.moveLog = []
 
     def MakeMove(self, move):
         self.board[move.depart_ligne][move.depart_colonne] = "_"
         self.board[move.arrivee_ligne][move.arrivee_colonne] = move.piece_deplacee
         self.moveLog.append(move)
         self.whiteToMove = not self.whiteToMove
+
 
 class Deplacement():
 
@@ -523,16 +562,20 @@ class Deplacement():
         self.piece_capturee = board[self.arrivee_ligne][self.arrivee_colonne]
 
 
-Longueur = int(3*512/2)
+Longueur = int(3 * 512 / 2)
 Largeur = 512
 Dimension = 8
 Taille_Carre = Largeur // Dimension
 image = {}
 
+
 def LoadImage():
     pieces = ["Tn", "Tb", "Cb", "Cn", "Fn", "Fb", "pn", "pb", "Rn", "Rb", "Dn", "Db"]
     for piece in pieces:
-        image[piece] = pygame.transform.scale(pygame.image.load("C:/Users/ulysse/Documents/cpes/L2/algorithmie/"+ piece + ".png"), ((Taille_Carre), (Taille_Carre)))
+        image[piece] = pygame.transform.scale(
+            pygame.image.load("C:/Users/Jerome/Documents/Images/"+ piece + ".png"),
+            ((Taille_Carre), (Taille_Carre)))
+
 
 def drawGameState(screen, Plateau, action, Potentiel):
     drawBoard(screen, Plateau, action, Potentiel)
@@ -543,91 +586,93 @@ def drawPotentiel(screen, Plateau, Potentiel):
     for i in Potentiel:
         x = i[0]
         y = i[1]
-        pygame.draw.circle(screen,(0,200,0),(y*Taille_Carre + 32, x*Taille_Carre + 32),30, 4)
-        # pygame.draw.rect(screen,(0,200,0),pygame.Rect(y*Taille_Carre + 2, x*Taille_Carre + 2, Taille_Carre - 4, Taille_Carre - 4))
+        pygame.draw.circle(screen, (0, 200, 0), (y * Taille_Carre + 32, x * Taille_Carre + 32), 30, 4)
+        #pygame.draw.rect(screen,(0,200,0),pygame.Rect(y*Taille_Carre + 2, x*Taille_Carre + 2, Taille_Carre - 4, Taille_Carre - 4))
 
 
 def drawBoard(screen, Plateau, action, Potentiel):
     colors = [pygame.Color(240, 240, 240), pygame.Color(187, 118, 63)]
     for i in range(Dimension):
         for j in range(Dimension):
-            color = colors[((i+j)%2)]
-            pygame.draw.rect(screen, color, pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre ))
+            color = colors[((i + j) % 2)]
+            pygame.draw.rect(screen, color, pygame.Rect(j * Taille_Carre, i * Taille_Carre, Taille_Carre, Taille_Carre))
     for i in range(8):
-        for j in [8,9,10,11]:
-            pygame.draw.rect(screen, (180,180,220), pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre))
+        for j in [8, 9, 10, 11]:
+            pygame.draw.rect(screen, (180, 180, 220),
+                             pygame.Rect(j * Taille_Carre, i * Taille_Carre, Taille_Carre, Taille_Carre))
     if action:
         drawPotentiel(screen, Plateau, Potentiel)
 
+
 def drawPiece(screen, board):
     for i in range(Dimension):
-        for j in range(Dimension+4):
+        for j in range(Dimension + 4):
             piece = board[i][j]
             if piece != "_" and piece != "bord":
-                screen.blit(image[piece], pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre ))
+                screen.blit(image[piece], pygame.Rect(j * Taille_Carre, i * Taille_Carre, Taille_Carre, Taille_Carre))
 
 
 def Recyclage_pion(screen, Plateau, action, couleur, M, N):
-    
     drawGameState(screen, Plateau, action, [])
-    
-    if couleur == 1 :
-        for i in range (3,5):
-            for j in range (8):
-                pygame.draw.rect(screen, (40,40,40), pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre ))
-        texte = pygame.font.Font('freesansbold.ttf',30).render("Choisissez la nouvelle pièce",False,(250,250,250))
+
+    if couleur == 1:
+        for i in range(3, 5):
+            for j in range(8):
+                pygame.draw.rect(screen, (40, 40, 40),
+                                 pygame.Rect(j * Taille_Carre, i * Taille_Carre, Taille_Carre, Taille_Carre))
+        texte = pygame.font.Font('freesansbold.ttf', 30).render("Choisissez la nouvelle pièce", False, (250, 250, 250))
         texte_centre = texte.get_rect()
-        texte_centre.center = (4*Taille_Carre, 3.5*Taille_Carre)
+        texte_centre.center = (4 * Taille_Carre, 3.5 * Taille_Carre)
         j = 32
         for piece in ["Tb", "Cb", "Fb", "Db"]:
-            screen.blit(image[piece], pygame.Rect(j, 4*Taille_Carre-15, Taille_Carre, Taille_Carre ))
-            j += 2*Taille_Carre
-    
-    if couleur == -1 :
-        for i in range (3,5):
-            for j in range (8):
-                pygame.draw.rect(screen, (250,250,250), pygame.Rect(j*Taille_Carre, i*Taille_Carre, Taille_Carre, Taille_Carre ))
-        texte = pygame.font.Font('freesansbold.ttf',30).render("Choisissez la nouvelle pièce",False,(40,40,40))
+            screen.blit(image[piece], pygame.Rect(j, 4 * Taille_Carre - 15, Taille_Carre, Taille_Carre))
+            j += 2 * Taille_Carre
+
+    if couleur == -1:
+        for i in range(3, 5):
+            for j in range(8):
+                pygame.draw.rect(screen, (250, 250, 250),
+                                 pygame.Rect(j * Taille_Carre, i * Taille_Carre, Taille_Carre, Taille_Carre))
+        texte = pygame.font.Font('freesansbold.ttf', 30).render("Choisissez la nouvelle pièce", False, (40, 40, 40))
         texte_centre = texte.get_rect()
-        texte_centre.center = (4*Taille_Carre, 3.5*Taille_Carre)
+        texte_centre.center = (4 * Taille_Carre, 3.5 * Taille_Carre)
         j = 32
         for piece in ["Tn", "Cn", "Fn", "Dn"]:
-            screen.blit(image[piece], pygame.Rect(j, 4*Taille_Carre-15, Taille_Carre, Taille_Carre ))
-            j += 2*Taille_Carre
-    
-    
+            screen.blit(image[piece], pygame.Rect(j, 4 * Taille_Carre - 15, Taille_Carre, Taille_Carre))
+            j += 2 * Taille_Carre
+
     screen.blit(texte, texte_centre)
     pygame.display.flip()
     run_recyclage = True
-    while run_recyclage :
+    while run_recyclage:
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 choix = pygame.mouse.get_pos()
                 print(choix)
-                if 246 < choix[1] < 304 :
-                    if 40 < choix[0] < 85 :
-                        if couleur == 1 : 
+                if 246 < choix[1] < 304:
+                    if 40 < choix[0] < 85:
+                        if couleur == 1:
                             Plateau[M][N] = 'Tb'
                         if couleur == -1:
                             Plateau[M][N] = 'Tn'
                         G[M][N] = Tour(couleur)
                         return (G, Plateau)
-                    if 168 < choix[0] < 213 :
-                        if couleur == 1 : 
+                    if 168 < choix[0] < 213:
+                        if couleur == 1:
                             Plateau[M][N] = 'Cb'
                         if couleur == -1:
                             Plateau[M][N] = 'Cn'
                         G[M][N] = Cavalier(couleur)
                         return (G, Plateau)
-                    if 293 < choix [0] < 350 : 
-                        if couleur == 1 : 
+                    if 293 < choix[0] < 350:
+                        if couleur == 1:
                             Plateau[M][N] = 'Fb'
                         if couleur == -1:
                             Plateau[M][N] = 'Fn'
                         G[M][N] = Fou(couleur)
                         return (G, Plateau)
-                    if 424 < choix [0] < 469 : 
-                        if couleur == 1 : 
+                    if 424 < choix[0] < 469:
+                        if couleur == 1:
                             Plateau[M][N] = 'Db'
                         if couleur == -1:
                             Plateau[M][N] = 'Dn'
@@ -637,20 +682,13 @@ def Recyclage_pion(screen, Plateau, action, couleur, M, N):
                 running = False
                 run_recyclage = False
                 pygame.quit()
-                
-            
-            
-                
-            
-    
-    
 
 
 ## Programme principal
 import copy
 
-def main():
 
+def main():
     pygame.init()
 
     screen = pygame.display.set_mode((Longueur, Largeur))
@@ -658,12 +696,22 @@ def main():
     A = GameState()
     Plateau = A.board
     pygame.display.set_caption("Échecs")
-    icon = pygame.image.load('C:/Users/ulysse/Documents/cpes/L2/algorithmie/chess.png')
+    icon = pygame.image.load('C:/Users/Jerome/Documents/chess.png')
     pygame.display.set_icon(icon)
     screen.fill((0, 0, 0))
     LoadImage()
 
-#Initialisation des variables
+    # Initialisation des variables
+
+    gag = []
+    for i in range(8):
+        l = []
+        for j in range(8):
+            l += [G[i][j]]
+        gag += l
+    memoire = [gag]
+
+
     running = True
     joueur = 0
     Cliques = []
@@ -673,8 +721,9 @@ def main():
     piecesPerdues = 0
     Potentiel = []
     Royal = [0, 3, 7, 3]
+    Antijeu = [False]
 
-    while running :
+    while running:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -683,36 +732,36 @@ def main():
                 print(test)
                 pygame.quit()
 
-            elif event.type == pygame.MOUSEBUTTONDOWN :
+            elif event.type == pygame.MOUSEBUTTONDOWN:
 
-                coul = (-1)**(joueur%2)
+                coul = (-1) ** (joueur % 2)
                 location = pygame.mouse.get_pos()
-                Ligne = location[1]//Taille_Carre
-                Colonne = location[0]//Taille_Carre
-                Cliques += [(Ligne,Colonne)]
+                Ligne = location[1] // Taille_Carre
+                Colonne = location[0] // Taille_Carre
+                Cliques += [(Ligne, Colonne)]
                 if G[Ligne][Colonne].couleur == coul and not action:
                     X = Ligne
                     Y = Colonne
-                    Potentiel = G[X][Y].possibilites(X,Y,Royal)
+                    Potentiel = G[X][Y].possibilites(X, Y, Royal)
                     action = True
                     drawGameState(screen, Plateau, action, Potentiel)
 
                 if G[Ligne][Colonne].couleur != coul and not action:
                     Cliques = []
 
-
-                if action and not (Ligne,Colonne) in Potentiel and len(Cliques) == 2:
+                if action and not (Ligne, Colonne) in Potentiel and len(Cliques) == 2:
                     action = False
                     Cliques = []
 
-                if action and (Ligne,Colonne) in Potentiel and len(Cliques) == 2:
+                if action and (Ligne, Colonne) in Potentiel and len(Cliques) == 2:
                     if Plateau[Ligne][Colonne] != "_":
                         info = True
                         Copie = copy.copy(Cliques[1])
                     if info:
                         piecesPerdues += 1
                         info = False
-                        deplacement = Deplacement(Copie, ((piecesPerdues-1)%8,11-((piecesPerdues-1)//8)), Plateau)
+                        deplacement = Deplacement(Copie, ((piecesPerdues - 1) % 8, 11 - ((piecesPerdues - 1) // 8)),
+                                                  Plateau)
                         A.MakeMove(deplacement)
 
                     deplacement = Deplacement(Cliques[0], Cliques[1], Plateau)
@@ -721,14 +770,12 @@ def main():
                     action = False
                     M = Ligne
                     N = Colonne
-                    mouvement(G,X,Y,N,M,Plateau,joueur,coul,A, Royal, screen, action)
-                    joueur += 1
+                    mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, Antijeu)
 
+                    joueur += 1
 
         drawGameState(screen, Plateau, action, Potentiel)
         pygame.display.flip()
-
-
 
 
 main()
