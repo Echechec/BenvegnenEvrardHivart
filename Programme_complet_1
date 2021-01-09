@@ -1,3 +1,6 @@
+icone = "C:/Users/Utilisateur/Documents/chess.png"
+Imagepieces = "C:/Users/Utilisateur/Documents/Images/"
+
 ## Classes
 class Vide():
 
@@ -592,7 +595,7 @@ def LoadImage():
     pieces = ["Tn", "Tb", "Cb", "Cn", "Fn", "Fb", "pn", "pb", "Rn", "Rb", "Dn", "Db"]
     for piece in pieces:
         image[piece] = pygame.transform.scale(
-            pygame.image.load("C:/Users/ulysse/Documents/cpes/L2/algorithmie/"+ piece + ".png"),
+            pygame.image.load(Imagepieces + piece + ".png"),
             ((Taille_Carre), (Taille_Carre)))
 
 
@@ -811,7 +814,7 @@ def main():
     A = GameState()
     Plateau = A.board
     pygame.display.set_caption("Échecs")
-    icon = pygame.image.load('C:/Users/ulysse/Documents/cpes/L2/algorithmie/chess.png')
+    icon = pygame.image.load(icone)
     pygame.display.set_icon(icon)
     screen.fill((0, 0, 0))
     LoadImage()
