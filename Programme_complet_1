@@ -420,7 +420,7 @@ if False:
 # nouveau est la dernière pièce à être jouée, dans son emplacement d'arivée
 
 
-def mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, Antijeu, long):
+def mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, Antijeu,long,pat,mat):
     if G[X][Y].type == "Roi":
         if coul == -1:
             Royal[2], Royal[3], Royal[0], Royal[1] = M, N, Royal[0], Royal[1]
@@ -470,9 +470,9 @@ def mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, A
 
         # pion en bout de ligne : changement de pièce
     if G[M][N].type == "Pion" and G[M][N].couleur == 1 and M == 7:
-        Recyclage_pion(screen, Plateau, action, 1, M, N, long)
+        Recyclage_pion(screen, Plateau, action, 1, M, N,long)
     if G[M][N].type == "Pion" and G[M][N].couleur == -1 and M == 0:
-        Recyclage_pion(screen, Plateau, action, -1, M, N, long)
+        Recyclage_pion(screen, Plateau, action, -1, M, N,long)
 
         # Progression des tours de jeux
     # Mystérieusement on doit le faire hors de la fonction sinon ça ne fonctionne pas ???? joueur += 1
@@ -480,18 +480,39 @@ def mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, A
     # PAT
     ok = []
     a = 0
-    while ok == [] and a < 8:
+    while ok == [] and a < 8 :
         b = 0
         while ok == [] and b < 8:
-            if G[a][b].couleur == (-1) * coul:
-                for i in G[a][b].possibilites(a, b, Royal):
+            if G[a][b].couleur == (-1)*coul:
+                for i in G[a][b].possibilites(a,b,Royal):
                     ok += [i]
             b += 1
         a += 1
     if ok == []:
-        pat = True
-    else:
-        pat = False
+        pat[0] = True
+
+
+                #MAT
+
+               
+    if coul == 1 :
+        Roi = [Royal[2],Royal[3]]
+    if coul == -1 :
+        Roi = [Royal[0],Royal[1]]
+
+    if vulnerabilite(Roi[0],Roi[1],(coul)):
+        print("échec")
+        ok = True
+        a = 0
+        while ok and a < 8 :
+            b = 0
+            while ok and b < 8:
+                if G[a][b].couleur == (-1)*coul and G[a][b].possibilites(a,b,Royal) != []:
+                    ok = False
+                b += 1
+            a += 1
+        if ok:
+            mat[0],mat[1] = True,(-1)*coul
 
     # Vérification d'une situation de répétition abusive du plateau de jeu
 
@@ -519,7 +540,7 @@ def mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, A
     memoire += [(gag,coul)]
 
 
-    return (G, Plateau, pat, Royal, memoire, Antijeu)
+    return (G, Plateau, pat,mat, Royal, memoire, Antijeu)
 
 
 ## Interface
@@ -571,17 +592,15 @@ def LoadImage():
     pieces = ["Tn", "Tb", "Cb", "Cn", "Fn", "Fb", "pn", "pb", "Rn", "Rb", "Dn", "Db"]
     for piece in pieces:
         image[piece] = pygame.transform.scale(
-            pygame.image.load("C:/Users/Jerome/Documents/Images/"+ piece + ".png"),
+            pygame.image.load("C:/Users/ulysse/Documents/cpes/L2/algorithmie/"+ piece + ".png"),
             ((Taille_Carre), (Taille_Carre)))
 
 
-def drawGameState(screen, Plateau, action, Potentiel, long):
-    drawBoard(screen, Plateau, action, Potentiel)
+def drawGameState(screen, Plateau, action, Potentiel, long,pat,mat,abandon,Antijeu,autorisation):
+    drawBoard(screen, Plateau, action, Potentiel,long)
     drawPiece(screen, Plateau)
-    texte = pygame.font.Font('freesansbold.ttf',30).render(f"{long}",True,(40,40,40))
-    texte_centre = texte.get_rect()
-    texte_centre.center = (8.5*Taille_Carre, 7.5*Taille_Carre)
-    screen.blit(texte, texte_centre)
+    drawFin(screen, mat, pat, abandon, Antijeu,autorisation)
+    
 
 
 def drawPotentiel(screen, Plateau, Potentiel):
@@ -592,7 +611,7 @@ def drawPotentiel(screen, Plateau, Potentiel):
         #pygame.draw.rect(screen,(0,200,0),pygame.Rect(y*Taille_Carre + 2, x*Taille_Carre + 2, Taille_Carre - 4, Taille_Carre - 4))
 
 
-def drawBoard(screen, Plateau, action, Potentiel,):
+def drawBoard(screen, Plateau, action, Potentiel,long):
     colors = [pygame.Color(240, 240, 240), pygame.Color(187, 118, 63)]
     for i in range(Dimension):
         for j in range(Dimension):
@@ -604,6 +623,11 @@ def drawBoard(screen, Plateau, action, Potentiel,):
                              pygame.Rect(j * Taille_Carre, i * Taille_Carre, Taille_Carre, Taille_Carre))
     if action:
         drawPotentiel(screen, Plateau, Potentiel)
+    
+    texte = pygame.font.Font('freesansbold.ttf',30).render(f"{long}",True,(40,40,40))
+    texte_centre = texte.get_rect()
+    texte_centre.center = (8.5*Taille_Carre, 7.5*Taille_Carre)
+    screen.blit(texte, texte_centre)
 
 
 
@@ -615,8 +639,63 @@ def drawPiece(screen, board):
                 screen.blit(image[piece], pygame.Rect(j * Taille_Carre, i * Taille_Carre, Taille_Carre, Taille_Carre))
 
 
-def Recyclage_pion(screen, Plateau, action, couleur, M, N, long):
-    drawGameState(screen, Plateau, action, [], long)
+def drawFin(screen, mat, pat, abandon, Antijeu,autorisation):
+    if mat[0]:
+        if mat[1] == 1:
+            ctexte = (40,40,40)
+            cfond = (255,0,127)
+            gagnant = "noirs"
+        if mat[1] == -1:
+            ctexte = (250,250,250)
+            cfond = (128, 0, 128)
+            gagnant = "blancs"
+
+        pygame.draw.rect(screen, cfond, pygame.Rect(0, 221, 8*Taille_Carre, 70))
+
+        texte = pygame.font.Font('freesansbold.ttf',30).render("Échec et mat, victoire des "+gagnant,True,ctexte)
+        texte_centre = texte.get_rect()
+        texte_centre.center = (4*Taille_Carre, 4*Taille_Carre)
+        screen.blit(texte, texte_centre)
+
+        pygame.display.flip()
+
+    if pat[0]:
+        pygame.draw.rect(screen,(255,0,127), pygame.Rect(0, 221, 8*Taille_Carre, 70))
+
+        texte = pygame.font.Font('freesansbold.ttf',30).render("Pat' chance",True,(40,40,40))
+        texte_centre = texte.get_rect()
+        texte_centre.center = (4*Taille_Carre, 4*Taille_Carre)
+        screen.blit(texte, texte_centre)
+
+        pygame.display.flip()
+        
+    if abandon[0]:
+        pygame.draw.rect(screen,(255,0,127), pygame.Rect(0, 221, 8*Taille_Carre, 70))
+        
+        if abandon[1] == 1 : cjoueur = "blancs"
+        if abandon[1] == -1 : cjoueur = "noirs"
+
+        texte = pygame.font.Font('freesansbold.ttf',30).render("Abandon des "+ cjoueur,True,(40,40,40))
+        texte_centre = texte.get_rect()
+        texte_centre.center = (4*Taille_Carre, 4*Taille_Carre)
+        screen.blit(texte, texte_centre)
+
+        pygame.display.flip()
+    
+    if Antijeu[0]:
+        pygame.draw.rect(screen,(255,0,127), pygame.Rect(0, 221, 8*Taille_Carre, 70))
+
+        texte = pygame.font.Font('freesansbold.ttf',25).render("Répétitions abusives: match nul",True,(40,40,40))
+        texte_centre = texte.get_rect()
+        texte_centre.center = (4*Taille_Carre, 4*Taille_Carre)
+        screen.blit(texte, texte_centre)
+
+        pygame.display.flip()
+        
+        autorisation[0] = False
+
+def Recyclage_pion(screen, Plateau, action, couleur, M, N,long):
+    drawGameState(screen, Plateau, action, [],long,pat,mat,abandon,Antijeu,autorisation)
 
     if couleur == 1:
         for i in range(3, 5):
@@ -686,6 +765,39 @@ def Recyclage_pion(screen, Plateau, action, couleur, M, N, long):
                 run_recyclage = False
                 pygame.quit()
 
+def DrawAbandon(screen, Plateau, abandon,coul):
+        for i in range(2, 7):
+            for j in range(8):
+                pygame.draw.rect(screen, (40, 40, 40),
+                                 pygame.Rect(j * Taille_Carre, i * Taille_Carre, Taille_Carre,
+                                             Taille_Carre))
+        if coul == 1 : cjoueur = "blanc"
+        if coul == -1 : cjoueur = "noir"
+        texte = pygame.font.Font('freesansbold.ttf', 25).render("Joueur " + cjoueur +": Voulez-vous abandonner ?", False,
+                                                                (250, 250, 250))
+        texte_centre = texte.get_rect()
+        texte_centre.center = (4 * Taille_Carre, 3.5 * Taille_Carre)
+        pygame.draw.rect(screen, (255,0,0),pygame.Rect(2*Taille_Carre, 5*Taille_Carre, Taille_Carre, Taille_Carre))
+        pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(5 * Taille_Carre, 5 * Taille_Carre, Taille_Carre, Taille_Carre))
+        screen.blit(texte, texte_centre)
+        pygame.display.flip()
+        run = True
+        while run:
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    choix = pygame.mouse.get_pos()
+                    Ligne = choix[1] // Taille_Carre
+                    Colonne = choix[0] // Taille_Carre
+                    if  Ligne == 5 and Colonne == 5:
+                        abandon[0],abandon[1] = True,coul
+                        return(abandon)
+                    if Ligne == 5 and Colonne ==2:
+                        return(abandon)
+                if event.type == pygame.QUIT:
+                    running = False
+                    run_recyclage = False
+                    pygame.quit()
+
 
 ## Programme principal
 import copy
@@ -699,7 +811,7 @@ def main():
     A = GameState()
     Plateau = A.board
     pygame.display.set_caption("Échecs")
-    icon = pygame.image.load('C:/Users/Jerome/Documents/chess.png')
+    icon = pygame.image.load('C:/Users/ulysse/Documents/cpes/L2/algorithmie/chess.png')
     pygame.display.set_icon(icon)
     screen.fill((0, 0, 0))
     LoadImage()
@@ -726,6 +838,10 @@ def main():
     Royal = [0, 3, 7, 3]
     Antijeu = [False]
     long = 0
+    pat = [False]
+    mat = [False, 0]
+    abandon = [False,0]
+    autorisation = [True]
 
     while running:
 
@@ -736,52 +852,59 @@ def main():
                 print(test)
                 pygame.quit()
 
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN :
+                
+                coul = (-1)**(joueur%2)
+                
+                if event.button == 3 :
+                    if DrawAbandon(screen, Plateau, abandon,coul)[0]:
+                        autorisation[0] = False
 
-                coul = (-1) ** (joueur % 2)
-                location = pygame.mouse.get_pos()
-                Ligne = location[1] // Taille_Carre
-                Colonne = location[0] // Taille_Carre
-                Cliques += [(Ligne, Colonne)]
-                if G[Ligne][Colonne].couleur == coul and not action:
-                    X = Ligne
-                    Y = Colonne
-                    Potentiel = G[X][Y].possibilites(X, Y, Royal)
-                    action = True
-                    drawGameState(screen, Plateau, action, Potentiel, long)
+                elif event.button != 3 and autorisation :
 
-                if G[Ligne][Colonne].couleur != coul and not action:
-                    Cliques = []
-
-                if action and not (Ligne, Colonne) in Potentiel and len(Cliques) == 2:
-                    action = False
-                    Cliques = []
-
-                if action and (Ligne, Colonne) in Potentiel and len(Cliques) == 2:
-                    if Plateau[Ligne][Colonne] != "_":
-                        info = True
-                        Copie = copy.copy(Cliques[1])
-                    if info:
-                        piecesPerdues += 1
-                        info = False
-                        deplacement = Deplacement(Copie, ((piecesPerdues - 1) % 8, 11 - ((piecesPerdues - 1) // 8)),
-                                                  Plateau)
+                    location = pygame.mouse.get_pos()
+                    Ligne = location[1] // Taille_Carre
+                    Colonne = location[0] // Taille_Carre
+                    Cliques += [(Ligne, Colonne)]
+                    if G[Ligne][Colonne].couleur == coul and not action:
+                        X = Ligne
+                        Y = Colonne
+                        Potentiel = G[X][Y].possibilites(X, Y, Royal)
+                        action = True
+                        drawGameState(screen, Plateau, action, Potentiel, long,pat,mat,abandon,Antijeu,autorisation)
+    
+                    if G[Ligne][Colonne].couleur != coul and not action:
+                        Cliques = []
+    
+                    if action and not (Ligne, Colonne) in Potentiel and len(Cliques) == 2:
+                        action = False
+                        Cliques = []
+    
+                    if action and (Ligne, Colonne) in Potentiel and len(Cliques) == 2:
+                        if Plateau[Ligne][Colonne] != "_":
+                            info = True
+                            Copie = copy.copy(Cliques[1])
+                        if info:
+                            piecesPerdues += 1
+                            info = False
+                            deplacement = Deplacement(Copie, ((piecesPerdues - 1) % 8, 11 - ((piecesPerdues - 1) // 8)),
+                                                    Plateau)
+                            A.MakeMove(deplacement)
+    
+                        deplacement = Deplacement(Cliques[0], Cliques[1], Plateau)
                         A.MakeMove(deplacement)
+                        Cliques = []
+                        action = False
+                        M = Ligne
+                        N = Colonne
+                        lon = len(memoire)
+                        mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, Antijeu,long,pat,mat)
+                        if lon != len(memoire): long += len(memoire) - lon
+                        else: long = 0
+    
+                        joueur += 1
 
-                    deplacement = Deplacement(Cliques[0], Cliques[1], Plateau)
-                    A.MakeMove(deplacement)
-                    Cliques = []
-                    action = False
-                    M = Ligne
-                    N = Colonne
-                    lon = len(memoire)
-                    mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, Antijeu, long)
-                    if lon != len(memoire): long += len(memoire) - lon
-                    else: long = 0
-
-                    joueur += 1
-
-        drawGameState(screen, Plateau, action, Potentiel, long)
+        drawGameState(screen, Plateau, action, Potentiel, long,pat,mat,abandon,Antijeu,autorisation)
         pygame.display.flip()
 
 
