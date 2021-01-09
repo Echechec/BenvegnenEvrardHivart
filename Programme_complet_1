@@ -616,7 +616,7 @@ def drawPiece(screen, board):
 
 
 def Recyclage_pion(screen, Plateau, action, couleur, M, N):
-    drawGameState(screen, Plateau, action, [])
+    drawGameState(screen, Plateau, action, [], long)
 
     if couleur == 1:
         for i in range(3, 5):
