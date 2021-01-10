@@ -1,5 +1,5 @@
-icone = "C:/Users/Utilisateur/Documents/chess.png"
-Imagepieces = "C:/Users/Utilisateur/Documents/Images/"
+icone = "C:/Users/Jerome/Documents/chess.png"
+Imagepieces = "C:/Users/Jerome/Documents/Images/"
 
 ## Classes
 class Vide():
@@ -423,7 +423,7 @@ if False:
 # nouveau est la dernière pièce à être jouée, dans son emplacement d'arivée
 
 
-def mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, Antijeu,long,pat,mat):
+def mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, Antijeu, long, pat, mat, abandon, autorisation):
     if G[X][Y].type == "Roi":
         if coul == -1:
             Royal[2], Royal[3], Royal[0], Royal[1] = M, N, Royal[0], Royal[1]
@@ -473,9 +473,9 @@ def mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, A
 
         # pion en bout de ligne : changement de pièce
     if G[M][N].type == "Pion" and G[M][N].couleur == 1 and M == 7:
-        Recyclage_pion(screen, Plateau, action, 1, M, N,long)
+        Recyclage_pion(screen, Plateau, action, 1, M, N,long, pat, mat, abandon, Antijeu, autorisation)
     if G[M][N].type == "Pion" and G[M][N].couleur == -1 and M == 0:
-        Recyclage_pion(screen, Plateau, action, -1, M, N,long)
+        Recyclage_pion(screen, Plateau, action, -1, M, N,long, pat, mat, abandon, Antijeu, autorisation)
 
         # Progression des tours de jeux
     # Mystérieusement on doit le faire hors de la fonction sinon ça ne fonctionne pas ???? joueur += 1
@@ -697,7 +697,7 @@ def drawFin(screen, mat, pat, abandon, Antijeu,autorisation):
         
         autorisation[0] = False
 
-def Recyclage_pion(screen, Plateau, action, couleur, M, N,long):
+def Recyclage_pion(screen, Plateau, action, couleur, M, N, long, pat, mat, abandon, Antijeu, autorisation):
     drawGameState(screen, Plateau, action, [],long,pat,mat,abandon,Antijeu,autorisation)
 
     if couleur == 1:
@@ -901,7 +901,7 @@ def main():
                         M = Ligne
                         N = Colonne
                         lon = len(memoire)
-                        mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, Antijeu,long,pat,mat)
+                        mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, Antijeu,long,pat,mat, abandon, autorisation)
                         if lon != len(memoire): long += len(memoire) - lon
                         else: long = 0
     
