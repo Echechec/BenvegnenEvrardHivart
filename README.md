@@ -1,12 +1,14 @@
 L’exécution de cet algorithme nécessite l’import de 12 images. Celles-ci sont fournies en annexe et nous vous invitons à compléter les deux premières lignes du programme de la manière suivante :
 
 icone = "emplacement de chess.png"
+
 Imagepieces = "emplacement de Images/png"
 
 Veuillez également corriger chaque slash, backslash, double slash selon ce qui est lisible par votre interpréteur et selon la syntaxe de votre système d'exploitation. 
 Exemple sur Windows:
 
 icone = "C:/Users/NomUtilisateur/Documents/chess.png"
+
 Imagepieces = "C:/Users/NomUtilisateur/Documents/Images/"
 
 Notez que le second chemin doit finir par un slash (ou anti-slash selon).
