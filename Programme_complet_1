@@ -2,6 +2,7 @@ icone = "C:/Users/Jerome/Documents/chess.png"
 Imagepieces = "C:/Users/Jerome/Documents/Images/"
 
 ## Classes
+
 class Vide():
 
     def __init__(self):
@@ -10,6 +11,7 @@ class Vide():
 
 
 class Pion():
+
     def __init__(self, couleur):
         self.couleur = couleur
         self.ligneInitiale = int(-3.5 * couleur + 3.5)
@@ -34,6 +36,7 @@ class Pion():
                     __Cases.append((a + self.couleur, b + k))
 
             # Prise en passant
+            # imprudence est un booléen activé lorsqu'un pion avance de 2, et immédiatement désactivé le coup suivant
             if a == self.ligneInitiale + self.couleur * 4:
                 if b != 7 and G[a][b + 1].type == "Pion" and G[a][b + 1].couleur == -self.couleur and G[a][
                     b + 1].imprudence and G[a + self.couleur][b + 1].type == "Vide":
@@ -66,7 +69,6 @@ class Pion():
         return _Cases_autorisees
 
 
-# imprudence est un booléen activé lorsqu'un pion avance de 2, et immédiatement désactivé le coup suivant
 
 class Cavalier():
 
@@ -109,6 +111,7 @@ class Cavalier():
 
 
 class Tour():
+
     def __init__(self, couleur):
         self.couleur = couleur
         self.ligneInitiale = int(-3.5 * couleur + 3.5)
@@ -167,6 +170,7 @@ class Tour():
 
 
 class Fou():
+
     def __init__(self, couleur):
         self.couleur = couleur
         self.ligneInitiale = int(-3.5 * couleur + 3.5)
@@ -306,6 +310,7 @@ class Dame():
 
 
 class Roi():
+
     def __init__(self, couleur):
         self.couleur = couleur
         self.ligneInitiale = int(-3.5 * couleur + 3.5)
@@ -323,6 +328,7 @@ class Roi():
         return (__Cases)
 
     def roquabilite(self):
+    # roquabilite renvoie [True,True] si les deux roques sont possibles (donc si le joueur a sélectionné le roi), [True,Flase] si le petit roque est possible, [False,True] si le grand roque est possible.
         r = [False, False]
         cou = self.couleur
         L = self.ligneInitiale
@@ -358,48 +364,11 @@ class Roi():
         if self.roquabilite()[1]:
             _Cases_autorisees.append((self.ligneInitiale, 5))
         return _Cases_autorisees
+        
 
 
-# roquabilite renvoie [True,True] si les deux roques sont possibles (donc si le joueur a sélectionné le roi), [True,Flase] si le petit roque est possible, [False,True] si le grand roque est possible.
+## Fonctions
 
-## Grille
-G = []
-for i in range(8):
-    g = []
-    for j in range(8):
-        g += [0]
-    G += [g]
-
-G[0][0] = Tour(1)
-G[0][7] = Tour(1)
-G[7][0] = Tour(-1)
-G[7][7] = Tour(-1)
-
-G[0][1] = Cavalier(1)
-G[0][6] = Cavalier(1)
-G[7][1] = Cavalier(-1)
-G[7][6] = Cavalier(-1)
-
-G[0][2] = Fou(1)
-G[0][5] = Fou(1)
-G[7][2] = Fou(-1)
-G[7][5] = Fou(-1)
-
-G[0][3] = Roi(1)
-G[0][4] = Dame(1)
-G[7][3] = Roi(-1)
-G[7][4] = Dame(-1)
-
-for k in range(8):
-    G[1][k] = Pion(1)
-    G[6][k] = Pion(-1)
-
-for i in range(2, 6):
-    for j in range(8):
-        G[i][j] = Vide()
-
-
-## Corps
 def vulnerabilite(a, b, couleur):
     for c in range(8):
         for d in range(8):
@@ -411,16 +380,8 @@ def vulnerabilite(a, b, couleur):
 
 # (Royal[0],Royal[1]) position du roi blanc
 # (Royal[2],Royal[3]) position du roi noir
-# (X,Y) case sur laquelle l'utilisateur clique au début de son tour
-
+# (X,Y) case d'origine de la pièce en moivement, (M,N) case d'arrivée de la pièce
 # Si joueur est pair alors les pièces blanches peuvent être sélectionnées, sinon les pièces noires --> couleur = 1**(joueur%2)
-joueur = 0
-
-if False:
-    X = abscisse_du_clic
-    Y = ordonnée_du_clic
-
-# nouveau est la dernière pièce à être jouée, dans son emplacement d'arivée
 
 
 def mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, Antijeu, long, pat, mat, abandon, autorisation):
@@ -442,7 +403,7 @@ def mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, A
     if (G[X][Y].type == "Tour" or G[X][Y].type == "Roi") and G[X][Y].virginite: memoire = []
 
     # réinitialisation de la grille
-
+    # nouveau est la dernière pièce à être jouée, dans son emplacement d'arivée
     G[M][N] = G[X][Y]
     G[X][Y] = Vide()
     nouveau = G[M][N]
@@ -466,7 +427,7 @@ def mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, A
             G[G[M][N].ligneInitiale][7] = Vide()
             A.MakeMove(Deplacement((G[M][N].ligneInitiale, 7), (G[M][N].ligneInitiale, 4), Plateau))
 
-            # effet de la prise en passant
+    # effet de la prise en passant
     if G[M][N].type == "Pion" and (X - M) ** 2 + (Y - N) ** 2 == 2 and CopiePriseEnPassant.type == "Vide":
         G[X][N] = Vide()
         Plateau[X][N] = "_"
@@ -476,9 +437,6 @@ def mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, A
         Recyclage_pion(screen, Plateau, action, 1, M, N,long, pat, mat, abandon, Antijeu, autorisation)
     if G[M][N].type == "Pion" and G[M][N].couleur == -1 and M == 0:
         Recyclage_pion(screen, Plateau, action, -1, M, N,long, pat, mat, abandon, Antijeu, autorisation)
-
-        # Progression des tours de jeux
-    # Mystérieusement on doit le faire hors de la fonction sinon ça ne fonctionne pas ???? joueur += 1
 
     # PAT
     ok = []
@@ -494,10 +452,7 @@ def mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, A
     if ok == []:
         pat[0] = True
 
-
-                #MAT
-
-
+    # MAT
     if coul == 1 :
         Roi = [Royal[2],Royal[3]]
     if coul == -1 :
@@ -543,13 +498,12 @@ def mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, A
     memoire += [(gag,coul)]
 
 
-    return (G, Plateau, pat,mat, Royal, memoire, Antijeu)
+    return (G, Plateau, pat, mat, Royal, memoire, Antijeu)
 
 
 ## Interface
 
 import pygame
-
 
 class GameState():
     def __init__(self):
@@ -563,14 +517,10 @@ class GameState():
             ["pn", "pn", "pn", "pn", "pn", "pn", "pn", "pn", "bord", "bord", "bord", "bord"],
             ["Tn", "Cn", "Fn", "Rn", "Dn", "Fn", "Cn", "Tn", "bord", "bord", "bord", "bord"]
         ]
-        self.whiteToMove = True
-        self.moveLog = []
 
     def MakeMove(self, move):
         self.board[move.depart_ligne][move.depart_colonne] = "_"
         self.board[move.arrivee_ligne][move.arrivee_colonne] = move.piece_deplacee
-        self.moveLog.append(move)
-        self.whiteToMove = not self.whiteToMove
 
 
 class Deplacement():
@@ -597,13 +547,6 @@ def LoadImage():
         image[piece] = pygame.transform.scale(
             pygame.image.load(Imagepieces + piece + ".png"),
             ((Taille_Carre), (Taille_Carre)))
-
-
-def drawGameState(screen, Plateau, action, Potentiel, long,pat,mat,abandon,Antijeu,autorisation):
-    drawBoard(screen, Plateau, action, Potentiel,long)
-    drawPiece(screen, Plateau)
-    drawFin(screen, mat, pat, abandon, Antijeu,autorisation)
-
 
 
 def drawPotentiel(screen, Plateau, Potentiel):
@@ -696,6 +639,13 @@ def drawFin(screen, mat, pat, abandon, Antijeu,autorisation):
         pygame.display.flip()
 
         autorisation[0] = False
+        
+        
+def drawGameState(screen, Plateau, action, Potentiel, long,pat,mat,abandon,Antijeu,autorisation):
+    drawBoard(screen, Plateau, action, Potentiel,long)
+    drawPiece(screen, Plateau)
+    drawFin(screen, mat, pat, abandon, Antijeu,autorisation)
+    
 
 def Recyclage_pion(screen, Plateau, action, couleur, M, N, long, pat, mat, abandon, Antijeu, autorisation):
     drawGameState(screen, Plateau, action, [],long,pat,mat,abandon,Antijeu,autorisation)
@@ -767,6 +717,7 @@ def Recyclage_pion(screen, Plateau, action, couleur, M, N, long, pat, mat, aband
                 running = False
                 run_recyclage = False
                 pygame.quit()
+                
 
 def DrawAbandon(screen, Plateau, abandon,coul):
         for i in range(2, 7):
@@ -803,14 +754,52 @@ def DrawAbandon(screen, Plateau, abandon,coul):
 
 
 ## Programme principal
+
 import copy
 
+# Grille
+
+G = []
+for i in range(8):
+    g = []
+    for j in range(8):
+        g += [0]
+    G += [g]
+
+G[0][0] = Tour(1)
+G[0][7] = Tour(1)
+G[7][0] = Tour(-1)
+G[7][7] = Tour(-1)
+
+G[0][1] = Cavalier(1)
+G[0][6] = Cavalier(1)
+G[7][1] = Cavalier(-1)
+G[7][6] = Cavalier(-1)
+
+G[0][2] = Fou(1)
+G[0][5] = Fou(1)
+G[7][2] = Fou(-1)
+G[7][5] = Fou(-1)
+
+G[0][3] = Roi(1)
+G[0][4] = Dame(1)
+G[7][3] = Roi(-1)
+G[7][4] = Dame(-1)
+
+for k in range(8):
+    G[1][k] = Pion(1)
+    G[6][k] = Pion(-1)
+
+for i in range(2, 6):
+    for j in range(8):
+        G[i][j] = Vide()
+
+# main
 
 def main():
     pygame.init()
 
     screen = pygame.display.set_mode((Longueur, Largeur))
-    clock = pygame.time.Clock()
     A = GameState()
     Plateau = A.board
     pygame.display.set_caption("Échecs")
@@ -833,9 +822,8 @@ def main():
     running = True
     joueur = 0
     Cliques = []
-    test = []
     action = False
-    info = False
+    sepulture = False
     piecesPerdues = 0
     Potentiel = []
     Royal = [0, 3, 7, 3]
@@ -852,9 +840,7 @@ def main():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                print()
                 running = False
-                print(test)
                 pygame.quit()
 
             elif event.type == pygame.MOUSEBUTTONDOWN :
@@ -868,9 +854,9 @@ def main():
 
                 elif event.button != 3 and autorisation[0] :
 
-                    location = pygame.mouse.get_pos()
-                    Ligne = location[1] // Taille_Carre
-                    Colonne = location[0] // Taille_Carre
+                    localisation = pygame.mouse.get_pos()
+                    Ligne = localisation[1] // Taille_Carre
+                    Colonne = localisation[0] // Taille_Carre
                     if Colonne > 7: dansCadre = False
                     Cliques += [(Ligne, Colonne)]
                     if dansCadre and G[Ligne][Colonne].couleur == coul and not action:
@@ -889,11 +875,11 @@ def main():
 
                     if action and (Ligne, Colonne) in Potentiel and len(Cliques) == 2:
                         if Plateau[Ligne][Colonne] != "_":
-                            info = True
+                            sepulture = True
                             Copie = copy.copy(Cliques[1])
-                        if info:
+                        if sepulture:
                             piecesPerdues += 1
-                            info = False
+                            sepulture = False
                             deplacement = Deplacement(Copie, ((piecesPerdues - 1) % 8, 11 - ((piecesPerdues - 1) // 8)),Plateau)
                             A.MakeMove(deplacement)
 
@@ -904,7 +890,7 @@ def main():
                         M = Ligne
                         N = Colonne
                         lon = len(memoire)
-                        mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, Antijeu,long,pat,mat, abandon, autorisation)
+                        mouvement(G, X, Y, N, M, Plateau, coul, A, Royal, screen, action, memoire, Antijeu, long, pat, mat, abandon, autorisation)
                         if lon != len(memoire): long += len(memoire) - lon
                         else: long = 0
 
